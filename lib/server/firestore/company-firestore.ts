@@ -8,7 +8,7 @@ function withId(id: string, data: Record<string, unknown>): Company {
   return {
     id,
     name: String(data.name ?? ''),
-    status: (data.status as Company['status']) ?? 'interested',
+    ...({ status: String(data.status ?? 'interested') } as any),
     industry: data.industry ? String(data.industry) : undefined,
     website: data.website ? String(data.website) : undefined,
     jobType: data.jobType ? String(data.jobType) : undefined,
