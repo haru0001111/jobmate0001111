@@ -1,0 +1,60 @@
+export type CompanyStage = 'interest' | 'applied' | 'es' | 'test' | 'interview' | 'offer' | 'rejected';
+export type EventType = '説明会' | 'ES締切' | '適性検査' | '面接' | '最終面接' | 'その他';
+export type EssayCategory = 'gakuchika' | 'self_pr' | 'motivation' | 'strengths' | 'other';
+
+export interface Company {
+  id: string;
+  userId?: string;
+  name: string;
+  stage: CompanyStage;
+  memo?: string;
+  createdAt: string;
+  updatedAt?: string;
+}
+
+export interface JobEvent {
+  id: string;
+  userId?: string;
+  companyId?: string;
+  title: string;
+  type: EventType;
+  startAt: string;
+  endAt?: string;
+  note?: string;
+  reminderMinutes?: number[];
+}
+
+export interface JobTask {
+  id: string;
+  userId?: string;
+  title: string;
+  dueAt?: string;
+  done: boolean;
+}
+
+export interface EssayEntry {
+  id: string;
+  userId?: string;
+  companyId?: string;
+  category: EssayCategory;
+  question: string;
+  answerLong: string;
+  answer400?: string;
+  answer300?: string;
+  answer200?: string;
+  answer100?: string;
+  tags: string[];
+  createdAt: string;
+  updatedAt?: string;
+}
+
+export interface PromptMatchLog {
+  id: string;
+  userId?: string;
+  pageUrl: string;
+  detectedQuestion: string;
+  suggestedEssayIds: string[];
+  selectedEssayId?: string;
+  insertedAt?: string;
+  createdAt: string;
+}

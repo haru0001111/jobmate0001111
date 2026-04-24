@@ -1,0 +1,49 @@
+[
+  {
+    "id": "e1",
+    "companyId": "c1",
+    "title": "一次面接",
+    "type": "面接",
+    "startAt": "2026-04-25T14:00:00+09:00",
+    "note": "志望動機と研究内容",
+    "reminderMinutes": [
+      1440,
+      60
+    ]
+  },
+  {
+    "id": "e2",
+    "companyId": "c2",
+    "title": "ES締切",
+    "type": "ES締切",
+    "startAt": "2026-04-27T23:59:00+09:00",
+    "note": "ガクチカ見直し",
+    "reminderMinutes": [
+      1440,
+      120
+    ]
+  },
+  {
+    "id": "e3",
+    "companyId": "c3",
+    "title": "Web適性検査",
+    "type": "適性検査",
+    "startAt": "2026-04-29T20:00:00+09:00",
+    "note": "受験URL確認",
+    "reminderMinutes": [
+      1440,
+      30
+    ]
+  },
+  {
+    "id": "e4",
+    "companyId": "c1",
+    "title": "最終面接候補日",
+    "type": "最終面接",
+    "startAt": "2026-05-02T10:00:00+09:00",
+    "note": "役員面接を想定",
+    "reminderMinutes": [
+      1440
+    ]
+  }
+]

@@ -1,0 +1,102 @@
+[
+  {
+    "id": "c1",
+    "name": "OpenAI Japan",
+    "industry": "AI / SaaS",
+    "website": "https://example.com/openai-japan",
+    "jobType": "ソフトウェアエンジニア",
+    "location": "東京",
+    "salary": "年俸制・経験に応じて決定",
+    "deadline": "2026-04-30T23:59:00+09:00",
+    "description": "生成AIプロダクトの企画・開発。英語でのコミュニケーションあり。",
+    "selectionFlow": [
+      "エントリー",
+      "ES提出",
+      "適性検査",
+      "一次面接",
+      "最終面接"
+    ],
+    "testType": "SPI",
+    "stage": "interview",
+    "memo": "AI系、志望度高",
+    "portal": {
+      "portalUrl": "https://mypage.example.com/openai-japan",
+      "recruitingUrl": "https://example.com/openai-japan/recruit",
+      "loginId": "student@example.com",
+      "loginIdLabel": "メールアドレス",
+      "loginMemo": "Googleログインも可。2段階認証あり。",
+      "passwordStored": false,
+      "lastCheckedAt": "2026-04-22T20:00:00+09:00",
+      "nextCheckAt": "2026-04-24T09:00:00+09:00"
+    },
+    "createdAt": "2026-04-23T15:39:24.155Z",
+    "updatedAt": "2026-04-23T15:39:24.155Z"
+  },
+  {
+    "id": "c2",
+    "name": "Sample Consulting",
+    "industry": "コンサルティング",
+    "website": "https://example.com/sample-consulting",
+    "jobType": "ビジネスコンサルタント",
+    "location": "東京 / 大阪",
+    "salary": "月給 32万円〜",
+    "deadline": "2026-04-27T23:59:00+09:00",
+    "description": "戦略・業務改革案件を担当。ケース面接あり。",
+    "selectionFlow": [
+      "エントリー",
+      "ES提出",
+      "Webテスト",
+      "ケース面接",
+      "最終面接"
+    ],
+    "testType": "TG-WEB",
+    "stage": "es",
+    "memo": "ES再利用候補",
+    "portal": {
+      "portalUrl": "https://career.example.com/sample-consulting",
+      "recruitingUrl": "https://example.com/sample-consulting/jobs/newgrad",
+      "loginId": "SC2027-00421",
+      "loginIdLabel": "会員ID",
+      "loginMemo": "初回はメール認証コードが必要。",
+      "passwordStored": false,
+      "lastCheckedAt": "2026-04-23T08:30:00+09:00",
+      "nextCheckAt": "2026-04-24T18:00:00+09:00"
+    },
+    "createdAt": "2026-04-23T15:39:24.155Z",
+    "updatedAt": "2026-04-23T15:39:24.155Z"
+  },
+  {
+    "id": "c3",
+    "name": "Future Retail",
+    "industry": "小売 / EC",
+    "website": "https://example.com/future-retail",
+    "jobType": "プロダクト企画",
+    "location": "東京",
+    "salary": "月給 28万円〜",
+    "deadline": "2026-05-03T23:59:00+09:00",
+    "description": "OMO戦略・EC改善に関わるポジション。",
+    "selectionFlow": [
+      "エントリー",
+      "ES提出",
+      "適性検査",
+      "一次面接",
+      "二次面接",
+      "最終面接"
+    ],
+    "testType": "玉手箱",
+    "stage": "test",
+    "memo": "適性検査あり",
+    "portal": {
+      "portalUrl": "https://job.example.com/future-retail",
+      "recruitingUrl": "https://example.com/future-retail/recruit",
+      "loginId": "student.retail@example.com",
+      "loginIdLabel": "メールアドレス",
+      "loginMemo": "SMS認証あり。PWは端末のパスワード管理を使う。",
+      "passwordStored": false,
+      "lastCheckedAt": "2026-04-21T19:00:00+09:00",
+      "nextCheckAt": "2026-04-25T09:00:00+09:00"
+    },
+    "createdAt": "2026-04-23T15:39:24.155Z",
+    "updatedAt": "2026-04-23T15:39:24.155Z"
+  }
+]
