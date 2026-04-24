@@ -3,8 +3,7 @@ import { getAuth } from "firebase-admin/auth";
 
 function getPrivateKey() {
   const value = process.env.FIREBASE_PRIVATE_KEY;
-  return value ? value.replace(/\n/g, '
-') : undefined;
+  return value ? value.replace(/\\n/g, '\n') : undefined;
 }
 
 export function isFirebaseAdminConfigured() {
