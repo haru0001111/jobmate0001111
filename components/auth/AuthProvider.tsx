@@ -2,15 +2,28 @@
 
 import { createContext, useContext, useEffect, useState } from 'react';
 import { auth, provider } from '@/lib/firebase';
-import { onAuthStateChanged, signInWithPopup, signOut } from 'firebase/auth';
+import { onAuthStateChanged, signInWithPopup, signOut, User } from 'firebase/auth';
 
-const AuthContext = createContext<any>(null);
+type AuthContextValue = {
+  user: User | null;
+  loading: boolean;
+  login: () => Promise<void>;
+  logout: () => Promise<void>;
+  signInWithGoogle: () => Promise<void>;
+};
+
+const AuthContext = createContext<AuthContextValue | null>(null);
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
-  const [user, setUser] = useState<any>(null);
+  const [user, setUser] = useState<User | null>(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const unsub = onAuthStateChanged(auth, setUser);
+    const unsub = onAuthStateChanged(auth, (currentUser) => {
+      setUser(currentUser);
+      setLoading(false);
+    });
+
     return () => unsub();
   }, []);
 
@@ -23,12 +36,24 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }
 
   return (
-    <AuthContext.Provider value={{ user, login, logout }}>
+    <AuthContext.Provider
+      value={{
+        user,
+        loading,
+        login,
+        logout,
+        signInWithGoogle: login,
+      }}
+    >
       {children}
     </AuthContext.Provider>
   );
 }
 
 export function useAuth() {
-  return useContext(AuthContext);
+  const ctx = useContext(AuthContext);
+  if (!ctx) {
+    throw new Error('useAuth must be used within AuthProvider');
+  }
+  return ctx;
 }
