@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { useEffect, useMemo, useState } from 'react';
+import { Suspense, useEffect, useMemo, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { getSaveMode, loadItems, removeItem, saveItem } from '@/lib/store';
 
@@ -25,7 +25,8 @@ const initialEssays: Essay[] = [
   },
 ];
 
-export default function EssaysPage() {
+// 👇 ここがポイント（分離）
+function EssaysContent() {
   const searchParams = useSearchParams();
   const companyId = searchParams.get('companyId') ?? '';
 
@@ -170,6 +171,15 @@ export default function EssaysPage() {
         </div>
       </section>
     </main>
+  );
+}
+
+// 👇 Suspenseでラップ（これがエラーの本質解決）
+export default function EssaysPage() {
+  return (
+    <Suspense fallback={<main style={{ padding: 24 }}>読み込み中...</main>}>
+      <EssaysContent />
+    </Suspense>
   );
 }
 
