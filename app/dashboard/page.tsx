@@ -17,6 +17,7 @@ const initialCompanies: Company[] = [];
 const statusLabel: Record<string, string> = {
   interested: '興味あり',
   applied: '応募済み',
+  waiting: '結果待ち',
   interview: '面接中',
   offer: '内定',
   rejected: '落選',
@@ -72,12 +73,13 @@ export default function DashboardPage() {
             もっとシンプルに。
           </h1>
           <p style={heroText}>
-            企業管理、ES管理、選考状況をひとつにまとめて、就活の進捗を見える化できます。
+            企業管理、ES管理、日程管理、選考状況をひとつにまとめて、就活の進捗を見える化できます。
           </p>
 
           <div style={heroFeatures}>
             <span style={featureItem}>企業管理</span>
             <span style={featureItem}>ES管理</span>
+            <span style={featureItem}>日程管理</span>
             <span style={featureItem}>選考ステータス</span>
           </div>
 
@@ -93,9 +95,13 @@ export default function DashboardPage() {
         <div>
           <p style={badge}>JobMate</p>
           <h1 style={title}>ダッシュボード</h1>
-          <p style={muted}>企業・ES・選考状況をまとめて管理</p>
+          <p style={muted}>企業・ES・日程・選考状況をまとめて管理</p>
         </div>
-        <button onClick={logout} style={ghostButton}>ログアウト</button>
+
+        <div style={actions}>
+          <Link href="/events" style={primaryButton}>日程管理へ</Link>
+          <button onClick={logout} style={ghostButton}>ログアウト</button>
+        </div>
       </header>
 
       <section style={statsGrid}>
@@ -131,7 +137,7 @@ export default function DashboardPage() {
           <select value={status} onChange={(e) => setStatus(e.target.value)} style={input}>
             <option value="interested">興味あり</option>
             <option value="applied">応募済み</option>
-　　　　　　<option value="applied">結果待ち</option>
+            <option value="waiting">結果待ち</option>
             <option value="interview">面接中</option>
             <option value="offer">内定</option>
             <option value="rejected">落選</option>
@@ -153,7 +159,11 @@ export default function DashboardPage() {
       <section style={card}>
         <div style={sectionHeader}>
           <h2 style={sectionTitle}>企業一覧</h2>
-          <Link href="/essays" style={ghostButton}>ES管理へ</Link>
+
+          <div style={actions}>
+            <Link href="/events" style={ghostButton}>日程管理へ</Link>
+            <Link href="/essays" style={ghostButton}>ES管理へ</Link>
+          </div>
         </div>
 
         <div style={list}>
@@ -345,6 +355,8 @@ const primaryButton: React.CSSProperties = {
   cursor: 'pointer',
   textDecoration: 'none',
   minHeight: 44,
+  display: 'inline-flex',
+  alignItems: 'center',
 };
 
 const ghostButton: React.CSSProperties = {
