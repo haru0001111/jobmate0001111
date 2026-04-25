@@ -27,8 +27,18 @@ type Essay = {
   category: string;
 };
 
+type JobEvent = {
+  id: string;
+  companyId: string;
+  title: string;
+  type: string;
+  startAt: string;
+  memo: string;
+};
+
 const initialCompanies: Company[] = [];
 const initialEssays: Essay[] = [];
+const initialEvents: JobEvent[] = [];
 
 const statusLabel: Record<string, string> = {
   interested: '興味あり',
@@ -36,6 +46,14 @@ const statusLabel: Record<string, string> = {
   interview: '面接中',
   offer: '内定',
   rejected: '落選',
+};
+
+const eventTypeLabel: Record<string, string> = {
+  seminar: '説明会',
+  interview: '面接',
+  es: 'ES締切',
+  test: 'Webテスト',
+  other: 'その他',
 };
 
 export default function CompanyDetailPage({
@@ -48,6 +66,7 @@ export default function CompanyDetailPage({
 
   const [companies, setCompanies] = useState<Company[]>([]);
   const [essays, setEssays] = useState<Essay[]>([]);
+  const [events, setEvents] = useState<JobEvent[]>([]);
   const [editing, setEditing] = useState(false);
 
   const [form, setForm] = useState<Company>({
@@ -70,13 +89,15 @@ export default function CompanyDetailPage({
   async function refresh() {
     if (!user) return;
 
-    const [companyData, essayData] = await Promise.all([
+    const [companyData, essayData, eventData] = await Promise.all([
       loadItems<Company>('companies', user.uid, initialCompanies),
       loadItems<Essay>('essays', user.uid, initialEssays),
+      loadItems<JobEvent>('events', user.uid, initialEvents),
     ]);
 
     setCompanies(companyData);
     setEssays(essayData);
+    setEvents(eventData);
 
     const found = companyData.find((c) => c.id === id);
     if (found) {
@@ -97,6 +118,12 @@ export default function CompanyDetailPage({
 
   const company = useMemo(() => companies.find((c) => c.id === id), [companies, id]);
   const relatedEssays = useMemo(() => essays.filter((e) => e.companyId === id), [essays, id]);
+
+  const relatedEvents = useMemo(() => {
+    return events
+      .filter((event) => event.companyId === id)
+      .sort((a, b) => new Date(a.startAt).getTime() - new Date(b.startAt).getTime());
+  }, [events, id]);
 
   async function saveCompanyDetail() {
     if (!user) return;
@@ -140,6 +167,7 @@ export default function CompanyDetailPage({
         <div style={actions}>
           <Link href="/dashboard" style={button}>ダッシュボードへ戻る</Link>
           <Link href={`/essays?companyId=${id}`} style={button}>この企業のESを見る</Link>
+          <Link href="/events" style={button}>日程管理へ</Link>
           <button onClick={() => setEditing((v) => !v)} style={primaryButton}>
             {editing ? '表示に戻る' : '編集する'}
           </button>
@@ -185,24 +213,12 @@ export default function CompanyDetailPage({
 
           <section style={card}>
             <h2 style={sectionTitle}>募集要項</h2>
-            <textarea
-              value={form.jobDescription}
-              onChange={(e) => updateForm('jobDescription', e.target.value)}
-              placeholder="職種・勤務地・給与・締切など"
-              rows={8}
-              style={textarea}
-            />
+            <textarea value={form.jobDescription} onChange={(e) => updateForm('jobDescription', e.target.value)} placeholder="職種・勤務地・給与・締切など" rows={8} style={textarea} />
           </section>
 
           <section style={card}>
             <h2 style={sectionTitle}>選考フロー</h2>
-            <textarea
-              value={form.selectionFlow}
-              onChange={(e) => updateForm('selectionFlow', e.target.value)}
-              placeholder="例：ES提出 → Webテスト → 一次面接 → 最終面接"
-              rows={6}
-              style={textarea}
-            />
+            <textarea value={form.selectionFlow} onChange={(e) => updateForm('selectionFlow', e.target.value)} placeholder="例：ES提出 → Webテスト → 一次面接 → 最終面接" rows={6} style={textarea} />
 
             <div style={{ ...actions, marginTop: 16 }}>
               <button onClick={saveCompanyDetail} style={primaryButton}>保存する</button>
@@ -225,6 +241,28 @@ export default function CompanyDetailPage({
             <p><strong>採用ページURL：</strong>{company?.recruitingUrl ? <a href={company.recruitingUrl} target="_blank">開く</a> : '未登録'}</p>
             <p><strong>loginId：</strong>{company?.loginId || '未登録'}</p>
             <p><strong>ログインメモ：</strong>{company?.loginMemo || '未登録'}</p>
+          </section>
+
+          <section style={card}>
+            <div style={sectionHeader}>
+              <h2 style={sectionTitle}>この企業の予定</h2>
+              <Link href="/events" style={button}>日程管理へ</Link>
+            </div>
+
+            {relatedEvents.length === 0 ? (
+              <p style={muted}>この企業に紐づく予定はまだありません。</p>
+            ) : (
+              <div style={list}>
+                {relatedEvents.map((event) => (
+                  <article key={event.id} style={item}>
+                    <div style={muted}>{eventTypeLabel[event.type] ?? event.type}</div>
+                    <h3 style={{ margin: '6px 0 8px' }}>{event.title}</h3>
+                    <p style={preText}>{formatDate(event.startAt)}</p>
+                    {event.memo && <p style={preText}>{event.memo}</p>}
+                  </article>
+                ))}
+              </div>
+            )}
           </section>
 
           <section style={card}>
@@ -259,6 +297,17 @@ export default function CompanyDetailPage({
       )}
     </main>
   );
+}
+
+function formatDate(value: string) {
+  if (!value) return '日時未設定';
+  return new Date(value).toLocaleString('ja-JP', {
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+    hour: '2-digit',
+    minute: '2-digit',
+  });
 }
 
 const page: React.CSSProperties = {
@@ -308,6 +357,15 @@ const card: React.CSSProperties = {
   background: '#fff',
   marginBottom: 20,
   boxShadow: '0 8px 20px rgba(15, 23, 42, 0.04)',
+};
+
+const sectionHeader: React.CSSProperties = {
+  display: 'flex',
+  justifyContent: 'space-between',
+  gap: 12,
+  flexWrap: 'wrap',
+  alignItems: 'center',
+  marginBottom: 16,
 };
 
 const sectionTitle: React.CSSProperties = {
