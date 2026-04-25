@@ -12,9 +12,7 @@ type Company = {
   testType: string;
 };
 
-const initialCompanies: Company[] = [
-  { id: 'c1', name: 'OpenAI Japan', status: 'interested', testType: 'SPI' },
-];
+const initialCompanies: Company[] = [];
 
 const statusLabel: Record<string, string> = {
   interested: '興味あり',
