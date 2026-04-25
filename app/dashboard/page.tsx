@@ -175,7 +175,7 @@ export default function DashboardPage() {
 
 const page: React.CSSProperties = {
   minHeight: '100vh',
-  padding: 32,
+  padding: 'clamp(16px, 4vw, 32px)',
   background: '#f6f7fb',
   color: '#111827',
   maxWidth: 1100,
@@ -186,28 +186,29 @@ const header: React.CSSProperties = {
   display: 'flex',
   justifyContent: 'space-between',
   gap: 16,
-  alignItems: 'center',
+  alignItems: 'flex-start',
   marginBottom: 24,
+  flexWrap: 'wrap',
 };
 
 const title: React.CSSProperties = {
   margin: 0,
-  fontSize: 32,
+  fontSize: 'clamp(26px, 5vw, 32px)',
   fontWeight: 800,
 };
 
 const heroCard: React.CSSProperties = {
-  marginTop: 80,
+  marginTop: 'clamp(32px, 10vw, 80px)',
   border: '1px solid #e5e7eb',
   borderRadius: 24,
-  padding: 36,
+  padding: 'clamp(22px, 6vw, 36px)',
   background: '#fff',
   boxShadow: '0 12px 30px rgba(15, 23, 42, 0.08)',
 };
 
 const heroTitle: React.CSSProperties = {
   margin: '8px 0',
-  fontSize: 40,
+  fontSize: 'clamp(30px, 8vw, 40px)',
   fontWeight: 900,
 };
 
@@ -215,6 +216,7 @@ const heroText: React.CSSProperties = {
   color: '#6b7280',
   fontSize: 16,
   marginBottom: 24,
+  lineHeight: 1.7,
 };
 
 const badge: React.CSSProperties = {
@@ -235,7 +237,7 @@ const muted: React.CSSProperties = {
 
 const statsGrid: React.CSSProperties = {
   display: 'grid',
-  gridTemplateColumns: 'repeat(3, 1fr)',
+  gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))',
   gap: 16,
   marginBottom: 20,
 };
@@ -257,7 +259,7 @@ const card: React.CSSProperties = {
   background: '#fff',
   border: '1px solid #e5e7eb',
   borderRadius: 22,
-  padding: 22,
+  padding: 'clamp(16px, 4vw, 22px)',
   marginBottom: 20,
   boxShadow: '0 8px 20px rgba(15, 23, 42, 0.04)',
 };
@@ -268,6 +270,7 @@ const sectionHeader: React.CSSProperties = {
   alignItems: 'center',
   gap: 12,
   marginBottom: 16,
+  flexWrap: 'wrap',
 };
 
 const sectionTitle: React.CSSProperties = {
@@ -278,7 +281,7 @@ const sectionTitle: React.CSSProperties = {
 
 const formGrid: React.CSSProperties = {
   display: 'grid',
-  gridTemplateColumns: '2fr 1fr 1fr auto',
+  gridTemplateColumns: 'repeat(auto-fit, minmax(210px, 1fr))',
   gap: 12,
 };
 
@@ -287,8 +290,9 @@ const input: React.CSSProperties = {
   padding: '12px 14px',
   border: '1px solid #d1d5db',
   borderRadius: 12,
-  fontSize: 14,
+  fontSize: 16,
   background: '#fff',
+  minHeight: 44,
 };
 
 const primaryButton: React.CSSProperties = {
@@ -300,6 +304,7 @@ const primaryButton: React.CSSProperties = {
   fontWeight: 800,
   cursor: 'pointer',
   textDecoration: 'none',
+  minHeight: 44,
 };
 
 const ghostButton: React.CSSProperties = {
@@ -311,6 +316,9 @@ const ghostButton: React.CSSProperties = {
   fontWeight: 700,
   cursor: 'pointer',
   textDecoration: 'none',
+  minHeight: 44,
+  display: 'inline-flex',
+  alignItems: 'center',
 };
 
 const dangerButton: React.CSSProperties = {
@@ -321,6 +329,7 @@ const dangerButton: React.CSSProperties = {
   color: '#be123c',
   fontWeight: 700,
   cursor: 'pointer',
+  minHeight: 44,
 };
 
 const list: React.CSSProperties = {
@@ -337,6 +346,7 @@ const companyCard: React.CSSProperties = {
   borderRadius: 18,
   padding: 18,
   background: '#fafafa',
+  flexWrap: 'wrap',
 };
 
 const companyName: React.CSSProperties = {

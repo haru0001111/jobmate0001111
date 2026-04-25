@@ -1,3 +1,44 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+}
+
+input,
+select,
+textarea,
+button {
+  font: inherit;
+}
+
+@media (max-width: 768px) {
+  main {
+    padding: 16px !important;
+  }
+
+  h1 {
+    font-size: 26px !important;
+  }
+
+  h2 {
+    font-size: 20px !important;
+  }
+
+  input,
+  select,
+  textarea,
+  button,
+  a {
+    font-size: 16px !important;
+  }
+
+  button,
+  a {
+    min-height: 44px;
+  }
+}
