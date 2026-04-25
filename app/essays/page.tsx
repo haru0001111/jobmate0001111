@@ -24,9 +24,7 @@ type Company = {
 
 const initialEssays: Essay[] = [];
 
-const initialCompanies: Company[] = [
-  { id: 'c1', name: 'OpenAI Japan', status: 'interested', testType: 'SPI' },
-];
+const initialCompanies: Company[] = [];
 
 function EssaysContent() {
   const { user, login } = useAuth();
