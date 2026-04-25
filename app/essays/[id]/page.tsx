@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { use, useEffect, useState } from 'react';
+import { use, useEffect, useMemo, useState } from 'react';
 import { loadItems } from '@/lib/store';
 
 type Essay = {
@@ -13,7 +13,17 @@ type Essay = {
   category: string;
 };
 
+type Company = {
+  id: string;
+  name: string;
+  status?: string;
+  testType?: string;
+};
+
 const initialEssays: Essay[] = [];
+const initialCompanies: Company[] = [
+  { id: 'c1', name: 'OpenAI Japan', status: 'interested', testType: 'SPI' },
+];
 
 export default function EssayDetailPage({
   params,
@@ -22,21 +32,34 @@ export default function EssayDetailPage({
 }) {
   const { id } = use(params);
   const [essay, setEssay] = useState<Essay | null>(null);
+  const [companies, setCompanies] = useState<Company[]>([]);
 
   useEffect(() => {
     async function load() {
-      const essays = await loadItems<Essay>('essays', initialEssays);
+      const [essays, companyData] = await Promise.all([
+        loadItems<Essay>('essays', initialEssays),
+        loadItems<Company>('companies', initialCompanies),
+      ]);
+
       setEssay(essays.find((e) => e.id === id) ?? null);
+      setCompanies(companyData);
     }
 
     load();
   }, [id]);
 
+  const companyName = useMemo(() => {
+    if (!essay) return '';
+    return companies.find((company) => company.id === essay.companyId)?.name ?? essay.companyId;
+  }, [companies, essay]);
+
   if (!essay) {
     return (
       <main style={page}>
         <section style={card}>
-          <h1>ESが見つかりません</h1>
+          <p style={badge}>Not Found</p>
+          <h1 style={title}>ESが見つかりません</h1>
+          <p style={muted}>削除されたか、URLが間違っている可能性があります。</p>
           <Link href="/essays" style={button}>ES一覧へ戻る</Link>
         </section>
       </main>
@@ -49,11 +72,42 @@ export default function EssayDetailPage({
         <div>
           <p style={badge}>ES Detail</p>
           <h1 style={title}>{essay.title}</h1>
-          <p style={muted}>企業ID: {essay.companyId} / {essay.category}</p>
+          <p style={muted}>
+            {companyName} / {essay.category} / {essay.body.length}文字
+          </p>
         </div>
 
-        <Link href="/essays" style={button}>ES一覧へ戻る</Link>
+        <div style={actions}>
+          <Link href="/essays" style={button}>ES一覧へ戻る</Link>
+          <Link href={`/essays?companyId=${essay.companyId}`} style={button}>
+            この企業のES
+          </Link>
+          <Link href="/essays" style={primaryButton}>
+            編集する
+          </Link>
+        </div>
       </header>
+
+      <section style={statsGrid}>
+        <div style={statCard}>
+          <div style={statNumber}>{essay.body.length}</div>
+          <div style={muted}>本文文字数</div>
+        </div>
+        <div style={statCard}>
+          <div style={statNumber}>{essay.question.length}</div>
+          <div style={muted}>設問文字数</div>
+        </div>
+        <div style={statCard}>
+          <div style={statNumber}>{essay.category}</div>
+          <div style={muted}>カテゴリ</div>
+        </div>
+      </section>
+
+      <section style={card}>
+        <h2 style={sectionTitle}>企業</h2>
+        <p style={text}>{companyName}</p>
+        <p style={muted}>企業ID: {essay.companyId}</p>
+      </section>
 
       <section style={card}>
         <h2 style={sectionTitle}>設問</h2>
@@ -117,6 +171,27 @@ const card: React.CSSProperties = {
   boxShadow: '0 8px 20px rgba(15, 23, 42, 0.04)',
 };
 
+const statsGrid: React.CSSProperties = {
+  display: 'grid',
+  gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))',
+  gap: 16,
+  marginBottom: 20,
+};
+
+const statCard: React.CSSProperties = {
+  background: '#fff',
+  border: '1px solid #e5e7eb',
+  borderRadius: 18,
+  padding: 18,
+  boxShadow: '0 8px 20px rgba(15, 23, 42, 0.04)',
+};
+
+const statNumber: React.CSSProperties = {
+  fontSize: 24,
+  fontWeight: 900,
+  wordBreak: 'break-word',
+};
+
 const sectionTitle: React.CSSProperties = {
   margin: '0 0 12px',
   fontSize: 22,
@@ -134,6 +209,12 @@ const bodyText: React.CSSProperties = {
   lineHeight: 1.9,
 };
 
+const actions: React.CSSProperties = {
+  display: 'flex',
+  gap: 8,
+  flexWrap: 'wrap',
+};
+
 const button: React.CSSProperties = {
   padding: '10px 14px',
   border: '1px solid #d1d5db',
@@ -141,6 +222,20 @@ const button: React.CSSProperties = {
   background: '#fff',
   color: '#111827',
   fontWeight: 700,
+  cursor: 'pointer',
+  textDecoration: 'none',
+  minHeight: 44,
+  display: 'inline-flex',
+  alignItems: 'center',
+};
+
+const primaryButton: React.CSSProperties = {
+  padding: '10px 14px',
+  border: 'none',
+  borderRadius: 12,
+  background: '#2563eb',
+  color: '#fff',
+  fontWeight: 800,
   cursor: 'pointer',
   textDecoration: 'none',
   minHeight: 44,
