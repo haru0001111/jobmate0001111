@@ -65,76 +65,85 @@ export default function DashboardPage() {
 
   if (!user) {
     return (
-      <main style={landingPage}>
-        <section style={heroCard}>
-          <p style={badge}>JobMate</p>
-          <h1 style={heroTitle}>
-            就活管理を、<br />
-            もっとシンプルに。
+      <main className="min-h-screen flex items-center justify-center px-6">
+        <section className="max-w-xl w-full bg-white/90 backdrop-blur border border-gray-200 rounded-3xl p-10 shadow-xl">
+          <p className="text-sm font-bold text-indigo-600">JobMate</p>
+          <h1 className="text-4xl font-black mt-2 leading-tight">
+            就活管理を、<br />もっとシンプルに。
           </h1>
-          <p style={heroText}>
-            企業管理、ES管理、日程管理、選考状況をひとつにまとめて、就活の進捗を見える化できます。
+          <p className="text-gray-500 mt-4 leading-relaxed">
+            企業・ES・日程・選考状況を一元管理できる就活アプリ
           </p>
 
-          <div style={heroFeatures}>
-            <span style={featureItem}>企業管理</span>
-            <span style={featureItem}>ES管理</span>
-            <span style={featureItem}>日程管理</span>
-            <span style={featureItem}>選考ステータス</span>
-          </div>
-
-          <button onClick={login} style={primaryButton}>Googleでログイン</button>
+          <button
+            onClick={login}
+            className="mt-6 w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-xl"
+          >
+            Googleでログイン
+          </button>
         </section>
       </main>
     );
   }
 
   return (
-    <main style={page}>
-      <header style={header}>
+    <main className="min-h-screen px-6 py-8 max-w-6xl mx-auto">
+
+      {/* HEADER */}
+      <header className="flex justify-between items-start flex-wrap gap-4 mb-6">
         <div>
-          <p style={badge}>JobMate</p>
-          <h1 style={title}>ダッシュボード</h1>
-          <p style={muted}>企業・ES・日程・選考状況をまとめて管理</p>
+          <p className="text-sm text-indigo-600 font-bold">JobMate</p>
+          <h1 className="text-3xl font-black mt-1">ダッシュボード</h1>
+          <p className="text-gray-500 text-sm">
+            企業・ES・日程をまとめて管理
+          </p>
         </div>
 
-        <div style={actions}>
-          <Link href="/events" style={primaryButton}>日程管理へ</Link>
-          <button onClick={logout} style={ghostButton}>ログアウト</button>
+        <div className="flex gap-2">
+          <Link href="/events" className="bg-blue-600 text-white px-4 py-2 rounded-xl font-bold">
+            日程管理
+          </Link>
+          <button onClick={logout} className="border px-4 py-2 rounded-xl">
+            ログアウト
+          </button>
         </div>
       </header>
 
-      <section style={statsGrid}>
-        <div style={statCard}>
-          <div style={statNumber}>{companies.length}</div>
-          <div style={muted}>登録企業</div>
+      {/* STATS */}
+      <section className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+        <div className="bg-white p-6 rounded-2xl shadow">
+          <div className="text-3xl font-black">{companies.length}</div>
+          <div className="text-gray-500 text-sm">登録企業</div>
         </div>
-        <div style={statCard}>
-          <div style={statNumber}>
-            {companies.filter((c) => c.status === 'applied' || c.status === 'interview').length}
+
+        <div className="bg-white p-6 rounded-2xl shadow">
+          <div className="text-3xl font-black">
+            {companies.filter(c => c.status === 'applied' || c.status === 'interview').length}
           </div>
-          <div style={muted}>選考中</div>
+          <div className="text-gray-500 text-sm">選考中</div>
         </div>
-        <div style={statCard}>
-          <div style={statNumber}>
-            {companies.filter((c) => c.status === 'offer').length}
+
+        <div className="bg-white p-6 rounded-2xl shadow">
+          <div className="text-3xl font-black">
+            {companies.filter(c => c.status === 'offer').length}
           </div>
-          <div style={muted}>内定</div>
+          <div className="text-gray-500 text-sm">内定</div>
         </div>
       </section>
 
-      <section style={card}>
-        <h2 style={sectionTitle}>企業を追加</h2>
+      {/* ADD */}
+      <section className="bg-white p-6 rounded-2xl shadow mb-6">
+        <h2 className="font-bold text-lg mb-4">企業を追加</h2>
 
-        <div style={formGrid}>
+        <div className="grid md:grid-cols-4 gap-3">
           <input
             value={name}
             onChange={(e) => setName(e.target.value)}
             placeholder="会社名"
-            style={input}
+            className="border rounded-xl px-3 py-2"
           />
 
-          <select value={status} onChange={(e) => setStatus(e.target.value)} style={input}>
+          <select value={status} onChange={(e) => setStatus(e.target.value)} className="border rounded-xl px-3 py-2">
             <option value="interested">興味あり</option>
             <option value="applied">応募済み</option>
             <option value="waiting">結果待ち</option>
@@ -143,295 +152,59 @@ export default function DashboardPage() {
             <option value="rejected">落選</option>
           </select>
 
-          <select value={testType} onChange={(e) => setTestType(e.target.value)} style={input}>
+          <select value={testType} onChange={(e) => setTestType(e.target.value)} className="border rounded-xl px-3 py-2">
             <option>SPI</option>
             <option>TG-WEB</option>
             <option>玉手箱</option>
             <option>Web-CAB</option>
-            <option>その他</option>
             <option>なし</option>
           </select>
 
-          <button onClick={saveCompany} style={primaryButton}>追加する</button>
+          <button onClick={saveCompany} className="bg-blue-600 text-white rounded-xl font-bold">
+            追加
+          </button>
         </div>
       </section>
 
-      <section style={card}>
-        <div style={sectionHeader}>
-          <h2 style={sectionTitle}>企業一覧</h2>
+      {/* LIST */}
+      <section className="bg-white p-6 rounded-2xl shadow">
+        <div className="flex justify-between mb-4">
+          <h2 className="font-bold text-lg">企業一覧</h2>
 
-          <div style={actions}>
-            <Link href="/events" style={ghostButton}>日程管理へ</Link>
-            <Link href="/essays" style={ghostButton}>ES管理へ</Link>
+          <div className="flex gap-2">
+            <Link href="/events" className="border px-3 py-2 rounded-xl">日程</Link>
+            <Link href="/essays" className="border px-3 py-2 rounded-xl">ES</Link>
           </div>
         </div>
 
-        <div style={list}>
+        <div className="space-y-3">
           {companies.map((c) => (
-            <article key={c.id} style={companyCard}>
+            <div key={c.id} className="flex justify-between items-center border p-4 rounded-xl bg-gray-50">
               <div>
-                <h3 style={companyName}>{c.name}</h3>
-                <div style={tagRow}>
-                  <span style={tag}>{statusLabel[c.status] ?? c.status}</span>
-                  <span style={tag}>{c.testType}</span>
+                <div className="font-bold">{c.name}</div>
+                <div className="text-sm text-gray-500">
+                  {statusLabel[c.status]} / {c.testType}
                 </div>
               </div>
 
-              <div style={actions}>
-                <Link href={`/companies/${c.id}`} style={ghostButton}>詳細</Link>
-                <button onClick={() => deleteCompany(c.id)} style={dangerButton}>削除</button>
+              <div className="flex gap-2">
+                <Link href={`/companies/${c.id}`} className="border px-3 py-1 rounded-lg">
+                  詳細
+                </Link>
+                <button onClick={() => deleteCompany(c.id)} className="text-red-600">
+                  削除
+                </button>
               </div>
-            </article>
+            </div>
           ))}
 
           {companies.length === 0 && (
-            <div style={empty}>まだ企業がありません。上のフォームから追加してね。</div>
+            <div className="text-gray-500 text-sm">
+              まだ企業がありません
+            </div>
           )}
         </div>
       </section>
     </main>
   );
 }
-
-const landingPage: React.CSSProperties = {
-  minHeight: '100vh',
-  padding: 'clamp(20px, 5vw, 48px)',
-  background: 'linear-gradient(135deg, #f8fafc 0%, #eef2ff 100%)',
-  color: '#111827',
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'center',
-};
-
-const page: React.CSSProperties = {
-  minHeight: '100vh',
-  padding: 'clamp(16px, 4vw, 32px)',
-  background: '#f6f7fb',
-  color: '#111827',
-  maxWidth: 1100,
-  margin: '0 auto',
-};
-
-const header: React.CSSProperties = {
-  display: 'flex',
-  justifyContent: 'space-between',
-  gap: 16,
-  alignItems: 'flex-start',
-  marginBottom: 24,
-  flexWrap: 'wrap',
-};
-
-const title: React.CSSProperties = {
-  margin: 0,
-  fontSize: 'clamp(26px, 5vw, 32px)',
-  fontWeight: 800,
-};
-
-const heroCard: React.CSSProperties = {
-  width: '100%',
-  maxWidth: 920,
-  border: '1px solid #e5e7eb',
-  borderRadius: 28,
-  padding: 'clamp(28px, 7vw, 56px)',
-  background: 'rgba(255, 255, 255, 0.92)',
-  boxShadow: '0 24px 60px rgba(15, 23, 42, 0.10)',
-};
-
-const heroTitle: React.CSSProperties = {
-  margin: '14px 0 12px',
-  fontSize: 'clamp(32px, 7vw, 52px)',
-  lineHeight: 1.15,
-  fontWeight: 900,
-  letterSpacing: '-0.04em',
-};
-
-const heroText: React.CSSProperties = {
-  color: '#6b7280',
-  fontSize: 'clamp(15px, 2vw, 17px)',
-  marginBottom: 22,
-  lineHeight: 1.8,
-  maxWidth: 680,
-};
-
-const heroFeatures: React.CSSProperties = {
-  display: 'flex',
-  gap: 10,
-  flexWrap: 'wrap',
-  marginBottom: 24,
-};
-
-const featureItem: React.CSSProperties = {
-  padding: '8px 12px',
-  borderRadius: 999,
-  background: '#f1f5f9',
-  color: '#334155',
-  fontSize: 13,
-  fontWeight: 800,
-};
-
-const badge: React.CSSProperties = {
-  display: 'inline-block',
-  margin: 0,
-  padding: '6px 10px',
-  borderRadius: 999,
-  background: '#eef2ff',
-  color: '#4338ca',
-  fontSize: 13,
-  fontWeight: 700,
-};
-
-const muted: React.CSSProperties = {
-  color: '#6b7280',
-  fontSize: 14,
-};
-
-const statsGrid: React.CSSProperties = {
-  display: 'grid',
-  gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))',
-  gap: 16,
-  marginBottom: 20,
-};
-
-const statCard: React.CSSProperties = {
-  background: '#fff',
-  border: '1px solid #e5e7eb',
-  borderRadius: 18,
-  padding: 18,
-  boxShadow: '0 8px 20px rgba(15, 23, 42, 0.04)',
-};
-
-const statNumber: React.CSSProperties = {
-  fontSize: 30,
-  fontWeight: 900,
-};
-
-const card: React.CSSProperties = {
-  background: '#fff',
-  border: '1px solid #e5e7eb',
-  borderRadius: 22,
-  padding: 'clamp(16px, 4vw, 22px)',
-  marginBottom: 20,
-  boxShadow: '0 8px 20px rgba(15, 23, 42, 0.04)',
-};
-
-const sectionHeader: React.CSSProperties = {
-  display: 'flex',
-  justifyContent: 'space-between',
-  alignItems: 'center',
-  gap: 12,
-  marginBottom: 16,
-  flexWrap: 'wrap',
-};
-
-const sectionTitle: React.CSSProperties = {
-  margin: 0,
-  fontSize: 22,
-  fontWeight: 800,
-};
-
-const formGrid: React.CSSProperties = {
-  display: 'grid',
-  gridTemplateColumns: 'repeat(auto-fit, minmax(210px, 1fr))',
-  gap: 12,
-};
-
-const input: React.CSSProperties = {
-  width: '100%',
-  padding: '12px 14px',
-  border: '1px solid #d1d5db',
-  borderRadius: 12,
-  fontSize: 16,
-  background: '#fff',
-  minHeight: 44,
-};
-
-const primaryButton: React.CSSProperties = {
-  padding: '12px 16px',
-  border: 'none',
-  borderRadius: 12,
-  background: '#2563eb',
-  color: '#fff',
-  fontWeight: 800,
-  cursor: 'pointer',
-  textDecoration: 'none',
-  minHeight: 44,
-  display: 'inline-flex',
-  alignItems: 'center',
-};
-
-const ghostButton: React.CSSProperties = {
-  padding: '10px 14px',
-  border: '1px solid #d1d5db',
-  borderRadius: 12,
-  background: '#fff',
-  color: '#111827',
-  fontWeight: 700,
-  cursor: 'pointer',
-  textDecoration: 'none',
-  minHeight: 44,
-  display: 'inline-flex',
-  alignItems: 'center',
-};
-
-const dangerButton: React.CSSProperties = {
-  padding: '10px 14px',
-  border: '1px solid #fecaca',
-  borderRadius: 12,
-  background: '#fff1f2',
-  color: '#be123c',
-  fontWeight: 700,
-  cursor: 'pointer',
-  minHeight: 44,
-};
-
-const list: React.CSSProperties = {
-  display: 'grid',
-  gap: 12,
-};
-
-const companyCard: React.CSSProperties = {
-  display: 'flex',
-  justifyContent: 'space-between',
-  gap: 16,
-  alignItems: 'center',
-  border: '1px solid #e5e7eb',
-  borderRadius: 18,
-  padding: 18,
-  background: '#fafafa',
-  flexWrap: 'wrap',
-};
-
-const companyName: React.CSSProperties = {
-  margin: '0 0 10px',
-  fontSize: 18,
-  fontWeight: 800,
-};
-
-const tagRow: React.CSSProperties = {
-  display: 'flex',
-  gap: 8,
-  flexWrap: 'wrap',
-};
-
-const tag: React.CSSProperties = {
-  display: 'inline-block',
-  padding: '5px 9px',
-  borderRadius: 999,
-  background: '#eef2ff',
-  color: '#3730a3',
-  fontSize: 12,
-  fontWeight: 700,
-};
-
-const actions: React.CSSProperties = {
-  display: 'flex',
-  gap: 8,
-  flexWrap: 'wrap',
-};
-
-const empty: React.CSSProperties = {
-  border: '1px dashed #d1d5db',
-  borderRadius: 16,
-  padding: 18,
-  color: '#6b7280',
-};
