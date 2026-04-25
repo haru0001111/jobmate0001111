@@ -276,6 +276,7 @@ function EssaysContent() {
               <p style={bodyStyle}>{essay.body}</p>
 
               <div style={{ ...actions, marginTop: 14 }}>
+　　　　　　　　<Link href={`/essays/${essay.id}`} style={ghostButton}>詳細</Link>
                 <button onClick={() => startEdit(essay)} style={ghostButton}>編集</button>
                 <button onClick={() => deleteEssay(essay.id)} style={dangerButton}>削除</button>
               </div>
