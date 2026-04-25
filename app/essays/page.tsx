@@ -31,11 +31,16 @@ function EssaysContent() {
 
   const [essays, setEssays] = useState<Essay[]>([]);
   const [editingId, setEditingId] = useState<string | null>(null);
+
   const [title, setTitle] = useState('');
   const [formCompanyId, setFormCompanyId] = useState(companyId);
   const [question, setQuestion] = useState('');
   const [category, setCategory] = useState('自己PR');
   const [body, setBody] = useState('');
+
+  const [keyword, setKeyword] = useState('');
+  const [filterCompanyId, setFilterCompanyId] = useState(companyId);
+  const [filterCategory, setFilterCategory] = useState('all');
 
   useEffect(() => {
     refresh();
@@ -43,20 +48,46 @@ function EssaysContent() {
 
   useEffect(() => {
     if (!editingId) setFormCompanyId(companyId);
+    setFilterCompanyId(companyId);
   }, [companyId, editingId]);
 
   async function refresh() {
     setEssays(await loadItems<Essay>('essays', initialEssays));
   }
 
+  const categories = useMemo(() => {
+    return Array.from(new Set(essays.map((e) => e.category))).filter(Boolean);
+  }, [essays]);
+
   const filteredEssays = useMemo(() => {
-    return companyId ? essays.filter((e) => e.companyId === companyId) : essays;
-  }, [essays, companyId]);
+    return essays.filter((essay) => {
+      const keywordTarget = `${essay.title} ${essay.question} ${essay.body} ${essay.companyId} ${essay.category}`.toLowerCase();
+
+      const matchesKeyword = keyword.trim()
+        ? keywordTarget.includes(keyword.trim().toLowerCase())
+        : true;
+
+      const matchesCompany = filterCompanyId.trim()
+        ? essay.companyId === filterCompanyId.trim()
+        : true;
+
+      const matchesCategory =
+        filterCategory === 'all' ? true : essay.category === filterCategory;
+
+      return matchesKeyword && matchesCompany && matchesCategory;
+    });
+  }, [essays, keyword, filterCompanyId, filterCategory]);
+
+  function resetFilters() {
+    setKeyword('');
+    setFilterCompanyId('');
+    setFilterCategory('all');
+  }
 
   function resetForm() {
     setEditingId(null);
     setTitle('');
-    setFormCompanyId(companyId);
+    setFormCompanyId(companyId || filterCompanyId);
     setQuestion('');
     setCategory('自己PR');
     setBody('');
@@ -104,13 +135,13 @@ function EssaysContent() {
           <p style={badge}>JobMate</p>
           <h1 style={titleStyle}>ES管理</h1>
           <p style={muted}>
-            {companyId ? `企業ID ${companyId} のESだけ表示中` : '全ESを表示中'} / 保存先: {getSaveMode()}
+            {filterCompanyId ? `企業ID ${filterCompanyId} のESを表示中` : '全ESを表示中'} / 保存先: {getSaveMode()}
           </p>
         </div>
 
         <div style={actions}>
           <Link href="/dashboard" style={ghostButton}>ダッシュボードへ</Link>
-          <Link href="/essays" style={ghostButton}>全ESを見る</Link>
+          <button onClick={resetFilters} style={ghostButton}>全ESを見る</button>
         </div>
       </header>
 
@@ -126,6 +157,39 @@ function EssaysContent() {
         <div style={statCard}>
           <div style={statNumber}>{new Set(essays.map((e) => e.companyId)).size}</div>
           <div style={muted}>関連企業数</div>
+        </div>
+      </section>
+
+      <section style={card}>
+        <h2 style={sectionTitle}>ESを探す</h2>
+
+        <div style={filterGrid}>
+          <input
+            value={keyword}
+            onChange={(e) => setKeyword(e.target.value)}
+            placeholder="キーワード検索（タイトル・設問・本文）"
+            style={input}
+          />
+
+          <input
+            value={filterCompanyId}
+            onChange={(e) => setFilterCompanyId(e.target.value)}
+            placeholder="企業IDで絞り込み（例: c1）"
+            style={input}
+          />
+
+          <select
+            value={filterCategory}
+            onChange={(e) => setFilterCategory(e.target.value)}
+            style={input}
+          >
+            <option value="all">すべてのカテゴリ</option>
+            {categories.map((c) => (
+              <option key={c} value={c}>{c}</option>
+            ))}
+          </select>
+
+          <button onClick={resetFilters} style={ghostButton}>絞り込み解除</button>
         </div>
       </section>
 
@@ -159,7 +223,7 @@ function EssaysContent() {
       <section style={card}>
         <div style={sectionHeader}>
           <h2 style={sectionTitle}>ES一覧</h2>
-          <span style={muted}>{filteredEssays.length}件</span>
+          <span style={muted}>{filteredEssays.length}件 / 全{essays.length}件</span>
         </div>
 
         <div style={list}>
@@ -182,7 +246,7 @@ function EssaysContent() {
           ))}
 
           {filteredEssays.length === 0 && (
-            <div style={empty}>この企業に紐づくESはまだありません。</div>
+            <div style={empty}>条件に合うESはありません。</div>
           )}
         </div>
       </section>
@@ -200,7 +264,7 @@ export default function EssaysPage() {
 
 const page: React.CSSProperties = {
   minHeight: '100vh',
-  padding: 32,
+  padding: 'clamp(16px, 4vw, 32px)',
   background: '#f6f7fb',
   color: '#111827',
   maxWidth: 1100,
@@ -211,8 +275,9 @@ const header: React.CSSProperties = {
   display: 'flex',
   justifyContent: 'space-between',
   gap: 16,
-  alignItems: 'center',
+  alignItems: 'flex-start',
   marginBottom: 24,
+  flexWrap: 'wrap',
 };
 
 const badge: React.CSSProperties = {
@@ -228,7 +293,7 @@ const badge: React.CSSProperties = {
 
 const titleStyle: React.CSSProperties = {
   margin: '8px 0 0',
-  fontSize: 32,
+  fontSize: 'clamp(26px, 5vw, 32px)',
   fontWeight: 800,
 };
 
@@ -239,7 +304,7 @@ const muted: React.CSSProperties = {
 
 const statsGrid: React.CSSProperties = {
   display: 'grid',
-  gridTemplateColumns: 'repeat(3, 1fr)',
+  gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))',
   gap: 16,
   marginBottom: 20,
 };
@@ -261,7 +326,7 @@ const card: React.CSSProperties = {
   background: '#fff',
   border: '1px solid #e5e7eb',
   borderRadius: 22,
-  padding: 22,
+  padding: 'clamp(16px, 4vw, 22px)',
   marginBottom: 20,
   boxShadow: '0 8px 20px rgba(15, 23, 42, 0.04)',
 };
@@ -272,6 +337,7 @@ const sectionHeader: React.CSSProperties = {
   alignItems: 'center',
   gap: 12,
   marginBottom: 16,
+  flexWrap: 'wrap',
 };
 
 const sectionTitle: React.CSSProperties = {
@@ -285,13 +351,20 @@ const formGrid: React.CSSProperties = {
   gap: 12,
 };
 
+const filterGrid: React.CSSProperties = {
+  display: 'grid',
+  gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))',
+  gap: 12,
+};
+
 const input: React.CSSProperties = {
   width: '100%',
   padding: '12px 14px',
   border: '1px solid #d1d5db',
   borderRadius: 12,
-  fontSize: 14,
+  fontSize: 16,
   background: '#fff',
+  minHeight: 44,
 };
 
 const primaryButton: React.CSSProperties = {
@@ -302,6 +375,7 @@ const primaryButton: React.CSSProperties = {
   color: '#fff',
   fontWeight: 800,
   cursor: 'pointer',
+  minHeight: 44,
 };
 
 const ghostButton: React.CSSProperties = {
@@ -313,6 +387,9 @@ const ghostButton: React.CSSProperties = {
   fontWeight: 700,
   cursor: 'pointer',
   textDecoration: 'none',
+  minHeight: 44,
+  display: 'inline-flex',
+  alignItems: 'center',
 };
 
 const dangerButton: React.CSSProperties = {
@@ -323,6 +400,7 @@ const dangerButton: React.CSSProperties = {
   color: '#be123c',
   fontWeight: 700,
   cursor: 'pointer',
+  minHeight: 44,
 };
 
 const actions: React.CSSProperties = {
