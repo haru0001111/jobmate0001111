@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { Suspense, useEffect, useMemo, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { getSaveMode, loadItems, removeItem, saveItem } from '@/lib/store';
+import { useAuth } from '@/components/auth/AuthProvider';
 
 type Essay = {
   id: string;
@@ -37,6 +38,7 @@ const initialCompanies: Company[] = [
 ];
 
 function EssaysContent() {
+  const { user, login } = useAuth();
   const searchParams = useSearchParams();
   const companyId = searchParams.get('companyId') ?? '';
 
@@ -55,8 +57,8 @@ function EssaysContent() {
   const [filterCategory, setFilterCategory] = useState('all');
 
   useEffect(() => {
-    refresh();
-  }, []);
+    if (user) refresh();
+  }, [user]);
 
   useEffect(() => {
     if (!editingId) setFormCompanyId(companyId);
@@ -64,9 +66,11 @@ function EssaysContent() {
   }, [companyId, editingId]);
 
   async function refresh() {
+    if (!user) return;
+
     const [essayData, companyData] = await Promise.all([
-      loadItems<Essay>('essays', initialEssays),
-      loadItems<Company>('companies', initialCompanies),
+      loadItems<Essay>('essays', user.uid, initialEssays),
+      loadItems<Company>('companies', user.uid, initialCompanies),
     ]);
 
     setEssays(essayData);
@@ -123,6 +127,8 @@ function EssaysContent() {
   }
 
   async function saveEssay() {
+    if (!user) return;
+
     if (!title.trim() || !body.trim()) {
       alert('タイトルと本文を入力してね');
       return;
@@ -137,7 +143,7 @@ function EssaysContent() {
       category,
     };
 
-    setEssays(await saveItem('essays', essay, essays));
+    setEssays(await saveItem('essays', user.uid, essay));
     resetForm();
   }
 
@@ -152,9 +158,24 @@ function EssaysContent() {
   }
 
   async function deleteEssay(id: string) {
+    if (!user) return;
     if (!confirm('このESを削除する？')) return;
-    setEssays(await removeItem('essays', id, essays));
+
+    setEssays(await removeItem('essays', user.uid, id));
     if (editingId === id) resetForm();
+  }
+
+  if (!user) {
+    return (
+      <main style={page}>
+        <section style={card}>
+          <p style={badge}>JobMate</p>
+          <h1 style={titleStyle}>ログインが必要です</h1>
+          <p style={muted}>ES管理を使うにはGoogleログインしてください。</p>
+          <button onClick={login} style={primaryButton}>Googleでログイン</button>
+        </section>
+      </main>
+    );
   }
 
   return (
@@ -206,11 +227,7 @@ function EssaysContent() {
             style={input}
           />
 
-          <select
-            value={filterCategory}
-            onChange={(e) => setFilterCategory(e.target.value)}
-            style={input}
-          >
+          <select value={filterCategory} onChange={(e) => setFilterCategory(e.target.value)} style={input}>
             <option value="all">すべてのカテゴリ</option>
             {categories.map((c) => (
               <option key={c} value={c}>{c}</option>
@@ -276,7 +293,7 @@ function EssaysContent() {
               <p style={bodyStyle}>{essay.body}</p>
 
               <div style={{ ...actions, marginTop: 14 }}>
-　　　　　　　　<Link href={`/essays/${essay.id}`} style={ghostButton}>詳細</Link>
+                <Link href={`/essays/${essay.id}`} style={ghostButton}>詳細</Link>
                 <button onClick={() => startEdit(essay)} style={ghostButton}>編集</button>
                 <button onClick={() => deleteEssay(essay.id)} style={dangerButton}>削除</button>
               </div>
