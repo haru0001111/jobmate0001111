@@ -66,13 +66,23 @@ export default function DashboardPage() {
 
   if (!user) {
     return (
-      <main style={page}>
+      <main style={landingPage}>
         <section style={heroCard}>
           <p style={badge}>JobMate</p>
-          <h1 style={heroTitle}>就活管理を、ひとつに。</h1>
+          <h1 style={heroTitle}>
+            就活管理を、<br />
+            もっとシンプルに。
+          </h1>
           <p style={heroText}>
-            企業、ES、選考状況をまとめて管理できる就活サポートアプリです。
+            企業管理、ES管理、選考状況をひとつにまとめて、就活の進捗を見える化できます。
           </p>
+
+          <div style={heroFeatures}>
+            <span style={featureItem}>企業管理</span>
+            <span style={featureItem}>ES管理</span>
+            <span style={featureItem}>選考ステータス</span>
+          </div>
+
           <button onClick={login} style={primaryButton}>Googleでログイン</button>
         </section>
       </main>
@@ -173,6 +183,16 @@ export default function DashboardPage() {
   );
 }
 
+const landingPage: React.CSSProperties = {
+  minHeight: '100vh',
+  padding: 'clamp(20px, 5vw, 48px)',
+  background: 'linear-gradient(135deg, #f8fafc 0%, #eef2ff 100%)',
+  color: '#111827',
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+};
+
 const page: React.CSSProperties = {
   minHeight: '100vh',
   padding: 'clamp(16px, 4vw, 32px)',
@@ -198,25 +218,45 @@ const title: React.CSSProperties = {
 };
 
 const heroCard: React.CSSProperties = {
-  marginTop: 'clamp(32px, 10vw, 80px)',
+  width: '100%',
+  maxWidth: 920,
   border: '1px solid #e5e7eb',
-  borderRadius: 24,
-  padding: 'clamp(22px, 6vw, 36px)',
-  background: '#fff',
-  boxShadow: '0 12px 30px rgba(15, 23, 42, 0.08)',
+  borderRadius: 28,
+  padding: 'clamp(28px, 7vw, 56px)',
+  background: 'rgba(255, 255, 255, 0.92)',
+  boxShadow: '0 24px 60px rgba(15, 23, 42, 0.10)',
 };
 
 const heroTitle: React.CSSProperties = {
-  margin: '8px 0',
-  fontSize: 'clamp(30px, 8vw, 40px)',
+  margin: '14px 0 12px',
+  fontSize: 'clamp(32px, 7vw, 52px)',
+  lineHeight: 1.15,
   fontWeight: 900,
+  letterSpacing: '-0.04em',
 };
 
 const heroText: React.CSSProperties = {
   color: '#6b7280',
-  fontSize: 16,
+  fontSize: 'clamp(15px, 2vw, 17px)',
+  marginBottom: 22,
+  lineHeight: 1.8,
+  maxWidth: 680,
+};
+
+const heroFeatures: React.CSSProperties = {
+  display: 'flex',
+  gap: 10,
+  flexWrap: 'wrap',
   marginBottom: 24,
-  lineHeight: 1.7,
+};
+
+const featureItem: React.CSSProperties = {
+  padding: '8px 12px',
+  borderRadius: 999,
+  background: '#f1f5f9',
+  color: '#334155',
+  fontSize: 13,
+  fontWeight: 800,
 };
 
 const badge: React.CSSProperties = {
