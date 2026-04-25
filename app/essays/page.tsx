@@ -25,14 +25,12 @@ const initialEssays: Essay[] = [
   },
 ];
 
-// 👇 ここがポイント（分離）
 function EssaysContent() {
   const searchParams = useSearchParams();
   const companyId = searchParams.get('companyId') ?? '';
 
   const [essays, setEssays] = useState<Essay[]>([]);
   const [editingId, setEditingId] = useState<string | null>(null);
-
   const [title, setTitle] = useState('');
   const [formCompanyId, setFormCompanyId] = useState(companyId);
   const [question, setQuestion] = useState('');
@@ -101,20 +99,35 @@ function EssaysContent() {
 
   return (
     <main style={page}>
-      <div style={header}>
+      <header style={header}>
         <div>
-          <p style={muted}>保存先: {getSaveMode()}</p>
+          <p style={badge}>JobMate</p>
           <h1 style={titleStyle}>ES管理</h1>
           <p style={muted}>
-            {companyId ? `企業ID ${companyId} のESだけ表示中` : '全ESを表示中'}
+            {companyId ? `企業ID ${companyId} のESだけ表示中` : '全ESを表示中'} / 保存先: {getSaveMode()}
           </p>
         </div>
 
         <div style={actions}>
-          <Link href="/dashboard" style={button}>ダッシュボードへ</Link>
-          <Link href="/essays" style={button}>全ESを見る</Link>
+          <Link href="/dashboard" style={ghostButton}>ダッシュボードへ</Link>
+          <Link href="/essays" style={ghostButton}>全ESを見る</Link>
         </div>
-      </div>
+      </header>
+
+      <section style={statsGrid}>
+        <div style={statCard}>
+          <div style={statNumber}>{essays.length}</div>
+          <div style={muted}>総ES数</div>
+        </div>
+        <div style={statCard}>
+          <div style={statNumber}>{filteredEssays.length}</div>
+          <div style={muted}>表示中</div>
+        </div>
+        <div style={statCard}>
+          <div style={statNumber}>{new Set(essays.map((e) => e.companyId)).size}</div>
+          <div style={muted}>関連企業数</div>
+        </div>
+      </section>
 
       <section style={card}>
         <h2 style={sectionTitle}>{editingId ? 'ESを編集中' : '新しいESを追加'}</h2>
@@ -135,38 +148,41 @@ function EssaysContent() {
           <textarea value={body} onChange={(e) => setBody(e.target.value)} placeholder="ES本文" rows={8} style={{ ...input, resize: 'vertical' }} />
 
           <div style={actions}>
-            <button onClick={saveEssay} style={button}>
+            <button onClick={saveEssay} style={primaryButton}>
               {editingId ? '変更を保存' : 'ESを保存'}
             </button>
-            {editingId && <button onClick={resetForm} style={button}>編集をキャンセル</button>}
+            {editingId && <button onClick={resetForm} style={ghostButton}>編集をキャンセル</button>}
           </div>
         </div>
       </section>
 
       <section style={card}>
-        <h2 style={sectionTitle}>ES一覧</h2>
+        <div style={sectionHeader}>
+          <h2 style={sectionTitle}>ES一覧</h2>
+          <span style={muted}>{filteredEssays.length}件</span>
+        </div>
 
         <div style={list}>
           {filteredEssays.map((essay) => (
-            <article key={essay.id} style={item}>
-              <div style={actions}>
+            <article key={essay.id} style={essayCard}>
+              <div style={tagRow}>
                 <span style={tag}>企業ID: {essay.companyId}</span>
                 <span style={tag}>{essay.category}</span>
               </div>
 
-              <h3 style={{ margin: '10px 0 8px', fontSize: 20 }}>{essay.title}</h3>
-              {essay.question && <p style={muted}>設問: {essay.question}</p>}
-              <p style={{ whiteSpace: 'pre-wrap', margin: 0 }}>{essay.body}</p>
+              <h3 style={essayTitle}>{essay.title}</h3>
+              {essay.question && <p style={questionStyle}>設問: {essay.question}</p>}
+              <p style={bodyStyle}>{essay.body}</p>
 
-              <div style={{ ...actions, marginTop: 12 }}>
-                <button onClick={() => startEdit(essay)} style={button}>編集</button>
-                <button onClick={() => deleteEssay(essay.id)} style={button}>削除</button>
+              <div style={{ ...actions, marginTop: 14 }}>
+                <button onClick={() => startEdit(essay)} style={ghostButton}>編集</button>
+                <button onClick={() => deleteEssay(essay.id)} style={dangerButton}>削除</button>
               </div>
             </article>
           ))}
 
           {filteredEssays.length === 0 && (
-            <div style={item}>この企業に紐づくESはまだありません。</div>
+            <div style={empty}>この企業に紐づくESはまだありません。</div>
           )}
         </div>
       </section>
@@ -174,7 +190,6 @@ function EssaysContent() {
   );
 }
 
-// 👇 Suspenseでラップ（これがエラーの本質解決）
 export default function EssaysPage() {
   return (
     <Suspense fallback={<main style={{ padding: 24 }}>読み込み中...</main>}>
@@ -183,16 +198,189 @@ export default function EssaysPage() {
   );
 }
 
-const page: React.CSSProperties = { padding: 24, maxWidth: 960, margin: '0 auto' };
-const header: React.CSSProperties = { display: 'flex', justifyContent: 'space-between', gap: 12, flexWrap: 'wrap', marginBottom: 20 };
-const titleStyle: React.CSSProperties = { margin: 0, fontSize: 28 };
-const muted: React.CSSProperties = { color: '#666', fontSize: 14 };
-const card: React.CSSProperties = { border: '1px solid #e5e7eb', borderRadius: 16, padding: 20, background: '#fff', marginBottom: 20 };
-const sectionTitle: React.CSSProperties = { margin: '0 0 16px', fontSize: 20, fontWeight: 700 };
-const formGrid: React.CSSProperties = { display: 'grid', gap: 12 };
-const input: React.CSSProperties = { width: '100%', padding: 12, border: '1px solid #ddd', borderRadius: 10 };
-const button: React.CSSProperties = { padding: '10px 14px', border: '1px solid #ddd', borderRadius: 10, background: '#fff', color: 'inherit', textDecoration: 'none', cursor: 'pointer' };
-const list: React.CSSProperties = { display: 'grid', gap: 16 };
-const item: React.CSSProperties = { border: '1px solid #eee', borderRadius: 12, padding: 16, background: '#fafafa' };
-const actions: React.CSSProperties = { display: 'flex', gap: 8, flexWrap: 'wrap' };
-const tag: React.CSSProperties = { padding: '4px 8px', borderRadius: 999, background: '#eee', fontSize: 12, color: '#555' };
+const page: React.CSSProperties = {
+  minHeight: '100vh',
+  padding: 32,
+  background: '#f6f7fb',
+  color: '#111827',
+  maxWidth: 1100,
+  margin: '0 auto',
+};
+
+const header: React.CSSProperties = {
+  display: 'flex',
+  justifyContent: 'space-between',
+  gap: 16,
+  alignItems: 'center',
+  marginBottom: 24,
+};
+
+const badge: React.CSSProperties = {
+  display: 'inline-block',
+  margin: 0,
+  padding: '6px 10px',
+  borderRadius: 999,
+  background: '#eef2ff',
+  color: '#4338ca',
+  fontSize: 13,
+  fontWeight: 700,
+};
+
+const titleStyle: React.CSSProperties = {
+  margin: '8px 0 0',
+  fontSize: 32,
+  fontWeight: 800,
+};
+
+const muted: React.CSSProperties = {
+  color: '#6b7280',
+  fontSize: 14,
+};
+
+const statsGrid: React.CSSProperties = {
+  display: 'grid',
+  gridTemplateColumns: 'repeat(3, 1fr)',
+  gap: 16,
+  marginBottom: 20,
+};
+
+const statCard: React.CSSProperties = {
+  background: '#fff',
+  border: '1px solid #e5e7eb',
+  borderRadius: 18,
+  padding: 18,
+  boxShadow: '0 8px 20px rgba(15, 23, 42, 0.04)',
+};
+
+const statNumber: React.CSSProperties = {
+  fontSize: 30,
+  fontWeight: 900,
+};
+
+const card: React.CSSProperties = {
+  background: '#fff',
+  border: '1px solid #e5e7eb',
+  borderRadius: 22,
+  padding: 22,
+  marginBottom: 20,
+  boxShadow: '0 8px 20px rgba(15, 23, 42, 0.04)',
+};
+
+const sectionHeader: React.CSSProperties = {
+  display: 'flex',
+  justifyContent: 'space-between',
+  alignItems: 'center',
+  gap: 12,
+  marginBottom: 16,
+};
+
+const sectionTitle: React.CSSProperties = {
+  margin: 0,
+  fontSize: 22,
+  fontWeight: 800,
+};
+
+const formGrid: React.CSSProperties = {
+  display: 'grid',
+  gap: 12,
+};
+
+const input: React.CSSProperties = {
+  width: '100%',
+  padding: '12px 14px',
+  border: '1px solid #d1d5db',
+  borderRadius: 12,
+  fontSize: 14,
+  background: '#fff',
+};
+
+const primaryButton: React.CSSProperties = {
+  padding: '12px 16px',
+  border: 'none',
+  borderRadius: 12,
+  background: '#2563eb',
+  color: '#fff',
+  fontWeight: 800,
+  cursor: 'pointer',
+};
+
+const ghostButton: React.CSSProperties = {
+  padding: '10px 14px',
+  border: '1px solid #d1d5db',
+  borderRadius: 12,
+  background: '#fff',
+  color: '#111827',
+  fontWeight: 700,
+  cursor: 'pointer',
+  textDecoration: 'none',
+};
+
+const dangerButton: React.CSSProperties = {
+  padding: '10px 14px',
+  border: '1px solid #fecaca',
+  borderRadius: 12,
+  background: '#fff1f2',
+  color: '#be123c',
+  fontWeight: 700,
+  cursor: 'pointer',
+};
+
+const actions: React.CSSProperties = {
+  display: 'flex',
+  gap: 8,
+  flexWrap: 'wrap',
+};
+
+const list: React.CSSProperties = {
+  display: 'grid',
+  gap: 14,
+};
+
+const essayCard: React.CSSProperties = {
+  border: '1px solid #e5e7eb',
+  borderRadius: 18,
+  padding: 18,
+  background: '#fafafa',
+};
+
+const tagRow: React.CSSProperties = {
+  display: 'flex',
+  gap: 8,
+  flexWrap: 'wrap',
+};
+
+const tag: React.CSSProperties = {
+  display: 'inline-block',
+  padding: '5px 9px',
+  borderRadius: 999,
+  background: '#eef2ff',
+  color: '#3730a3',
+  fontSize: 12,
+  fontWeight: 700,
+};
+
+const essayTitle: React.CSSProperties = {
+  margin: '12px 0 8px',
+  fontSize: 20,
+  fontWeight: 800,
+};
+
+const questionStyle: React.CSSProperties = {
+  margin: '0 0 8px',
+  color: '#6b7280',
+  fontSize: 14,
+};
+
+const bodyStyle: React.CSSProperties = {
+  whiteSpace: 'pre-wrap',
+  margin: 0,
+  lineHeight: 1.7,
+  color: '#374151',
+};
+
+const empty: React.CSSProperties = {
+  border: '1px dashed #d1d5db',
+  borderRadius: 16,
+  padding: 18,
+  color: '#6b7280',
+};
