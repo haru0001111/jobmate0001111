@@ -49,6 +49,7 @@ export default function CompanyDetailPage({
   const [companies, setCompanies] = useState<Company[]>([]);
   const [essays, setEssays] = useState<Essay[]>([]);
   const [editing, setEditing] = useState(false);
+  const [loadingAutoFill, setLoadingAutoFill] = useState(false);
 
   const [form, setForm] = useState<Company>({
     id,
@@ -109,6 +110,42 @@ export default function CompanyDetailPage({
     await saveItem('companies', user.uid, form);
     setEditing(false);
     refresh();
+  }
+
+  async function autoFillFromRecruitingUrl() {
+    if (!form.recruitingUrl?.trim()) {
+      alert('採用ページURLを入力してね');
+      return;
+    }
+
+    try {
+      setLoadingAutoFill(true);
+
+      const res = await fetch('/api/extract-company', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ url: form.recruitingUrl }),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok || data.error) {
+        alert(data.error || '自動入力に失敗しました');
+        return;
+      }
+
+      setForm((prev) => ({
+        ...prev,
+        jobDescription: data.jobDescription || prev.jobDescription || '',
+        selectionFlow: data.selectionFlow || prev.selectionFlow || '',
+      }));
+
+      alert('募集要項と選考フローを自動入力しました');
+    } catch {
+      alert('自動入力に失敗しました');
+    } finally {
+      setLoadingAutoFill(false);
+    }
   }
 
   function updateForm<K extends keyof Company>(key: K, value: Company[K]) {
@@ -178,6 +215,15 @@ export default function CompanyDetailPage({
             <div style={formGrid}>
               <input value={form.portalUrl} onChange={(e) => updateForm('portalUrl', e.target.value)} placeholder="マイページURL" style={input} />
               <input value={form.recruitingUrl} onChange={(e) => updateForm('recruitingUrl', e.target.value)} placeholder="採用ページURL" style={input} />
+
+              <button
+                onClick={autoFillFromRecruitingUrl}
+                style={primaryButton}
+                disabled={loadingAutoFill}
+              >
+                {loadingAutoFill ? '自動入力中…' : '採用ページから自動入力'}
+              </button>
+
               <input value={form.loginId} onChange={(e) => updateForm('loginId', e.target.value)} placeholder="ログインID / メール" style={input} />
               <textarea value={form.loginMemo} onChange={(e) => updateForm('loginMemo', e.target.value)} placeholder="ログインメモ" rows={4} style={textarea} />
             </div>
