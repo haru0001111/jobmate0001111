@@ -131,6 +131,7 @@ export default function DashboardPage() {
           <select value={status} onChange={(e) => setStatus(e.target.value)} style={input}>
             <option value="interested">興味あり</option>
             <option value="applied">応募済み</option>
+　　　　　　<option value="applied">結果待ち</option>
             <option value="interview">面接中</option>
             <option value="offer">内定</option>
             <option value="rejected">落選</option>
@@ -141,6 +142,7 @@ export default function DashboardPage() {
             <option>TG-WEB</option>
             <option>玉手箱</option>
             <option>Web-CAB</option>
+            <option>その他</option>
             <option>なし</option>
           </select>
 
