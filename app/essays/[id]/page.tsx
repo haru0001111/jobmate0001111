@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import { use, useEffect, useMemo, useState } from 'react';
 import { loadItems } from '@/lib/store';
+import { useAuth } from '@/components/auth/AuthProvider';
 
 type Essay = {
   id: string;
@@ -31,27 +32,59 @@ export default function EssayDetailPage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = use(params);
+  const { user, login } = useAuth();
+
   const [essay, setEssay] = useState<Essay | null>(null);
   const [companies, setCompanies] = useState<Company[]>([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     async function load() {
+      if (!user) {
+        setLoading(false);
+        return;
+      }
+
       const [essays, companyData] = await Promise.all([
-        loadItems<Essay>('essays', initialEssays),
-        loadItems<Company>('companies', initialCompanies),
+        loadItems<Essay>('essays', user.uid, initialEssays),
+        loadItems<Company>('companies', user.uid, initialCompanies),
       ]);
 
       setEssay(essays.find((e) => e.id === id) ?? null);
       setCompanies(companyData);
+      setLoading(false);
     }
 
     load();
-  }, [id]);
+  }, [id, user]);
 
   const companyName = useMemo(() => {
     if (!essay) return '';
     return companies.find((company) => company.id === essay.companyId)?.name ?? essay.companyId;
   }, [companies, essay]);
+
+  if (!user) {
+    return (
+      <main style={page}>
+        <section style={card}>
+          <p style={badge}>JobMate</p>
+          <h1 style={title}>ログインが必要です</h1>
+          <p style={muted}>ES詳細を見るにはGoogleログインしてください。</p>
+          <button onClick={login} style={primaryButton}>Googleでログイン</button>
+        </section>
+      </main>
+    );
+  }
+
+  if (loading) {
+    return (
+      <main style={page}>
+        <section style={card}>
+          <p style={muted}>読み込み中...</p>
+        </section>
+      </main>
+    );
+  }
 
   if (!essay) {
     return (
