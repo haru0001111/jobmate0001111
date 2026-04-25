@@ -141,7 +141,6 @@ function EssaysContent() {
 
         <div style={actions}>
           <Link href="/dashboard" style={ghostButton}>ダッシュボードへ</Link>
-          <button onClick={resetFilters} style={ghostButton}>全ESを見る</button>
         </div>
       </header>
 
