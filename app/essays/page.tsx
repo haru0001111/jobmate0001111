@@ -14,6 +14,13 @@ type Essay = {
   category: string;
 };
 
+type Company = {
+  id: string;
+  name: string;
+  status?: string;
+  testType?: string;
+};
+
 const initialEssays: Essay[] = [
   {
     id: 'e1',
@@ -25,11 +32,16 @@ const initialEssays: Essay[] = [
   },
 ];
 
+const initialCompanies: Company[] = [
+  { id: 'c1', name: 'OpenAI Japan', status: 'interested', testType: 'SPI' },
+];
+
 function EssaysContent() {
   const searchParams = useSearchParams();
   const companyId = searchParams.get('companyId') ?? '';
 
   const [essays, setEssays] = useState<Essay[]>([]);
+  const [companies, setCompanies] = useState<Company[]>([]);
   const [editingId, setEditingId] = useState<string | null>(null);
 
   const [title, setTitle] = useState('');
@@ -52,7 +64,21 @@ function EssaysContent() {
   }, [companyId, editingId]);
 
   async function refresh() {
-    setEssays(await loadItems<Essay>('essays', initialEssays));
+    const [essayData, companyData] = await Promise.all([
+      loadItems<Essay>('essays', initialEssays),
+      loadItems<Company>('companies', initialCompanies),
+    ]);
+
+    setEssays(essayData);
+    setCompanies(companyData);
+  }
+
+  const companyNameMap = useMemo(() => {
+    return new Map(companies.map((company) => [company.id, company.name]));
+  }, [companies]);
+
+  function getCompanyName(id: string) {
+    return companyNameMap.get(id) ?? id;
   }
 
   const categories = useMemo(() => {
@@ -61,14 +87,17 @@ function EssaysContent() {
 
   const filteredEssays = useMemo(() => {
     return essays.filter((essay) => {
-      const keywordTarget = `${essay.title} ${essay.question} ${essay.body} ${essay.companyId} ${essay.category}`.toLowerCase();
+      const companyName = getCompanyName(essay.companyId);
+
+      const keywordTarget = `${essay.title} ${essay.question} ${essay.body} ${essay.companyId} ${companyName} ${essay.category}`.toLowerCase();
 
       const matchesKeyword = keyword.trim()
         ? keywordTarget.includes(keyword.trim().toLowerCase())
         : true;
 
       const matchesCompany = filterCompanyId.trim()
-        ? essay.companyId === filterCompanyId.trim()
+        ? essay.companyId === filterCompanyId.trim() ||
+          companyName.toLowerCase().includes(filterCompanyId.trim().toLowerCase())
         : true;
 
       const matchesCategory =
@@ -76,7 +105,7 @@ function EssaysContent() {
 
       return matchesKeyword && matchesCompany && matchesCategory;
     });
-  }, [essays, keyword, filterCompanyId, filterCategory]);
+  }, [essays, keyword, filterCompanyId, filterCategory, companyNameMap]);
 
   function resetFilters() {
     setKeyword('');
@@ -135,7 +164,7 @@ function EssaysContent() {
           <p style={badge}>JobMate</p>
           <h1 style={titleStyle}>ES管理</h1>
           <p style={muted}>
-            {filterCompanyId ? `企業ID ${filterCompanyId} のESを表示中` : '全ESを表示中'} / 保存先: {getSaveMode()}
+            {filterCompanyId ? `${getCompanyName(filterCompanyId)} のESを表示中` : '全ESを表示中'} / 保存先: {getSaveMode()}
           </p>
         </div>
 
@@ -166,14 +195,14 @@ function EssaysContent() {
           <input
             value={keyword}
             onChange={(e) => setKeyword(e.target.value)}
-            placeholder="キーワード検索（タイトル・設問・本文）"
+            placeholder="キーワード検索（タイトル・設問・本文・企業名）"
             style={input}
           />
 
           <input
             value={filterCompanyId}
             onChange={(e) => setFilterCompanyId(e.target.value)}
-            placeholder="企業IDで絞り込み（例: c1）"
+            placeholder="企業名 or 企業IDで絞り込み"
             style={input}
           />
 
@@ -197,7 +226,16 @@ function EssaysContent() {
 
         <div style={formGrid}>
           <input value={title} onChange={(e) => setTitle(e.target.value)} placeholder="タイトル" style={input} />
-          <input value={formCompanyId} onChange={(e) => setFormCompanyId(e.target.value)} placeholder="企業ID（例: c1）" style={input} />
+
+          <select value={formCompanyId} onChange={(e) => setFormCompanyId(e.target.value)} style={input}>
+            <option value="">企業を選択</option>
+            {companies.map((company) => (
+              <option key={company.id} value={company.id}>
+                {company.name}
+              </option>
+            ))}
+          </select>
+
           <input value={question} onChange={(e) => setQuestion(e.target.value)} placeholder="設問" style={input} />
 
           <select value={category} onChange={(e) => setCategory(e.target.value)} style={input}>
@@ -229,7 +267,7 @@ function EssaysContent() {
           {filteredEssays.map((essay) => (
             <article key={essay.id} style={essayCard}>
               <div style={tagRow}>
-                <span style={tag}>企業ID: {essay.companyId}</span>
+                <span style={tag}>{getCompanyName(essay.companyId)}</span>
                 <span style={tag}>{essay.category}</span>
               </div>
 
