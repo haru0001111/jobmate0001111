@@ -22,16 +22,7 @@ type Company = {
   testType?: string;
 };
 
-const initialEssays: Essay[] = [
-  {
-    id: 'e1',
-    companyId: 'c1',
-    title: 'OpenAI向け自己PR',
-    question: '自己PRをしてください',
-    body: 'AIへの関心と研究経験を軸にした自己PRです。',
-    category: '自己PR',
-  },
-];
+const initialEssays: Essay[] = [];
 
 const initialCompanies: Company[] = [
   { id: 'c1', name: 'OpenAI Japan', status: 'interested', testType: 'SPI' },
