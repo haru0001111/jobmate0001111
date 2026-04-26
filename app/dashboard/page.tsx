@@ -24,12 +24,22 @@ const statusLabel: Record<string, string> = {
 };
 
 export default function DashboardPage() {
-  const { user, login, logout } = useAuth();
+  const {
+    user,
+    login,
+    logout,
+    loginWithEmail,
+    register,
+    sendMagicLink,
+  } = useAuth();
 
   const [companies, setCompanies] = useState<Company[]>([]);
   const [name, setName] = useState('');
   const [status, setStatus] = useState('interested');
   const [testType, setTestType] = useState('SPI');
+
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
 
   useEffect(() => {
     if (user) refresh();
@@ -63,6 +73,45 @@ export default function DashboardPage() {
     refresh();
   }
 
+  async function handleEmailLogin() {
+    if (!email || !password) {
+      alert('メールアドレスとパスワードを入力してね');
+      return;
+    }
+
+    try {
+      await loginWithEmail(email, password);
+    } catch {
+      alert('メールログインに失敗しました');
+    }
+  }
+
+  async function handleRegister() {
+    if (!email || !password) {
+      alert('メールアドレスとパスワードを入力してね');
+      return;
+    }
+
+    try {
+      await register(email, password);
+    } catch {
+      alert('新規登録に失敗しました');
+    }
+  }
+
+  async function handleMagicLink() {
+    if (!email) {
+      alert('メールアドレスを入力してね');
+      return;
+    }
+
+    try {
+      await sendMagicLink(email);
+    } catch {
+      alert('メールリンク送信に失敗しました');
+    }
+  }
+
   if (!user) {
     return (
       <main style={landingPage}>
@@ -83,7 +132,39 @@ export default function DashboardPage() {
             <span style={featureItem}>選考ステータス</span>
           </div>
 
-          <button onClick={login} style={primaryButton}>Googleでログイン</button>
+          <div style={loginBox}>
+            <button onClick={login} style={primaryButton}>Googleでログイン</button>
+
+            <div style={divider}>または</div>
+
+            <input
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              placeholder="メールアドレス"
+              style={input}
+            />
+
+            <input
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              placeholder="パスワード"
+              style={input}
+            />
+
+            <div style={actions}>
+              <button onClick={handleEmailLogin} style={primaryButton}>
+                メールでログイン
+              </button>
+              <button onClick={handleRegister} style={ghostButton}>
+                新規登録
+              </button>
+            </div>
+
+            <button onClick={handleMagicLink} style={ghostButton}>
+              パスワードなしでメールリンクログイン
+            </button>
+          </div>
         </section>
       </main>
     );
@@ -127,12 +208,7 @@ export default function DashboardPage() {
         <h2 style={sectionTitle}>企業を追加</h2>
 
         <div style={formGrid}>
-          <input
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            placeholder="会社名"
-            style={input}
-          />
+          <input value={name} onChange={(e) => setName(e.target.value)} placeholder="会社名" style={input} />
 
           <select value={status} onChange={(e) => setStatus(e.target.value)} style={input}>
             <option value="interested">興味あり</option>
@@ -269,6 +345,19 @@ const featureItem: React.CSSProperties = {
   fontWeight: 800,
 };
 
+const loginBox: React.CSSProperties = {
+  display: 'grid',
+  gap: 10,
+  maxWidth: 460,
+};
+
+const divider: React.CSSProperties = {
+  color: '#6b7280',
+  fontSize: 13,
+  fontWeight: 700,
+  textAlign: 'center',
+};
+
 const badge: React.CSSProperties = {
   display: 'inline-block',
   margin: 0,
@@ -357,6 +446,7 @@ const primaryButton: React.CSSProperties = {
   minHeight: 44,
   display: 'inline-flex',
   alignItems: 'center',
+  justifyContent: 'center',
 };
 
 const ghostButton: React.CSSProperties = {
@@ -371,6 +461,7 @@ const ghostButton: React.CSSProperties = {
   minHeight: 44,
   display: 'inline-flex',
   alignItems: 'center',
+  justifyContent: 'center',
 };
 
 const dangerButton: React.CSSProperties = {
