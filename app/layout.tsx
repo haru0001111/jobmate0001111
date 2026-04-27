@@ -7,7 +7,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <head>
         <meta
           name="google-site-verification"
-          content="_6dVqOeIkYiLj5bRALMmjPYBr2u-xN_foeOhFSZ2Ael"
+          content="_6dVqOelkYiLj5bRALMnjPYBr2u-xN_foeQhFSZ2AeU"
         />
       </head>
       <body>
