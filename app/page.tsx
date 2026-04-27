@@ -1,37 +1,159 @@
+import Link from 'next/link';
+
 export default function HomePage() {
   return (
-    <main style={{ padding: 40, maxWidth: 900, margin: '0 auto' }}>
-      <h1>JobMate｜就活管理アプリ</h1>
+    <main style={page}>
+      <section style={hero}>
+        <p style={badge}>JobMate</p>
 
-      <p>
-        JobMateは、企業・ES・面接・日程を一元管理できる就活支援ツールです。
-      </p>
+        <h1 style={title}>
+          就活管理を、<br />
+          もっとシンプルに。
+        </h1>
 
-      <h2>主な機能</h2>
-      <ul>
-        <li>企業情報の管理</li>
-        <li>ESの保存・整理</li>
-        <li>選考ステータスの可視化</li>
-        <li>説明会・面接の日程管理</li>
-      </ul>
+        <p style={lead}>
+          企業情報、ES、面接、説明会の日程をひとつにまとめて管理できる就活支援アプリです。
+        </p>
 
-      <h2>こんな人におすすめ</h2>
-      <ul>
-        <li>就活を効率化したい人</li>
-        <li>複数企業を管理したい人</li>
-      </ul>
+        <div style={actions}>
+          <Link href="/dashboard" style={primaryButton}>
+            アプリを使う
+          </Link>
+          <Link href="/features" style={secondaryButton}>
+            機能を見る
+          </Link>
+        </div>
+      </section>
 
-      <p>
-        <a href="/dashboard">アプリを使う（ログイン）</a>
-      </p>
+      <section style={grid}>
+        <div style={card}>
+          <h2 style={cardTitle}>企業管理</h2>
+          <p style={cardText}>企業ごとの選考状況や適性検査を整理できます。</p>
+        </div>
 
-      <hr />
+        <div style={card}>
+          <h2 style={cardTitle}>ES管理</h2>
+          <p style={cardText}>エントリーシートを企業ごとに保存できます。</p>
+        </div>
 
-      <p>
-        <a href="/features">機能紹介</a> |{' '}
-        <a href="/privacy">プライバシーポリシー</a> |{' '}
-        <a href="/terms">利用規約</a>
-      </p>
+        <div style={card}>
+          <h2 style={cardTitle}>日程管理</h2>
+          <p style={cardText}>説明会や面接の予定をまとめて確認できます。</p>
+        </div>
+      </section>
+
+      <footer style={footer}>
+        <Link href="/privacy" style={footerLink}>プライバシーポリシー</Link>
+        <Link href="/terms" style={footerLink}>利用規約</Link>
+      </footer>
     </main>
   );
 }
+
+const page: React.CSSProperties = {
+  minHeight: '100vh',
+  padding: 'clamp(24px, 6vw, 64px)',
+  background: 'linear-gradient(135deg, #f8fafc 0%, #eef2ff 100%)',
+  color: '#0f172a',
+};
+
+const hero: React.CSSProperties = {
+  maxWidth: 920,
+  margin: '0 auto',
+  padding: 'clamp(32px, 8vw, 72px) 0',
+};
+
+const badge: React.CSSProperties = {
+  display: 'inline-block',
+  padding: '8px 12px',
+  borderRadius: 999,
+  background: '#eef2ff',
+  color: '#4338ca',
+  fontSize: 13,
+  fontWeight: 800,
+};
+
+const title: React.CSSProperties = {
+  margin: '20px 0 16px',
+  fontSize: 'clamp(42px, 8vw, 72px)',
+  lineHeight: 1.05,
+  fontWeight: 900,
+  letterSpacing: '-0.06em',
+};
+
+const lead: React.CSSProperties = {
+  maxWidth: 640,
+  color: '#64748b',
+  fontSize: 'clamp(16px, 2vw, 20px)',
+  lineHeight: 1.8,
+  marginBottom: 28,
+};
+
+const actions: React.CSSProperties = {
+  display: 'flex',
+  gap: 12,
+  flexWrap: 'wrap',
+};
+
+const primaryButton: React.CSSProperties = {
+  padding: '13px 18px',
+  borderRadius: 14,
+  background: '#2563eb',
+  color: '#fff',
+  fontWeight: 800,
+  textDecoration: 'none',
+};
+
+const secondaryButton: React.CSSProperties = {
+  padding: '13px 18px',
+  borderRadius: 14,
+  background: '#fff',
+  color: '#0f172a',
+  border: '1px solid #e5e7eb',
+  fontWeight: 800,
+  textDecoration: 'none',
+};
+
+const grid: React.CSSProperties = {
+  maxWidth: 920,
+  margin: '0 auto',
+  display: 'grid',
+  gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))',
+  gap: 16,
+};
+
+const card: React.CSSProperties = {
+  background: 'rgba(255,255,255,0.9)',
+  border: '1px solid #e5e7eb',
+  borderRadius: 24,
+  padding: 24,
+  boxShadow: '0 12px 32px rgba(15,23,42,0.06)',
+};
+
+const cardTitle: React.CSSProperties = {
+  margin: '0 0 8px',
+  fontSize: 20,
+  fontWeight: 900,
+};
+
+const cardText: React.CSSProperties = {
+  margin: 0,
+  color: '#64748b',
+  lineHeight: 1.7,
+};
+
+const footer: React.CSSProperties = {
+  maxWidth: 920,
+  margin: '40px auto 0',
+  paddingTop: 20,
+  borderTop: '1px solid #e5e7eb',
+  display: 'flex',
+  gap: 16,
+  flexWrap: 'wrap',
+};
+
+const footerLink: React.CSSProperties = {
+  color: '#475569',
+  fontWeight: 700,
+  textDecoration: 'none',
+};
