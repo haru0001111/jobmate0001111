@@ -5,7 +5,7 @@ import { AuthProvider } from '@/components/auth/AuthProvider';
 <head>
 
 export default function RootLayout({ children }: any) {
-  return (
+ return (
     <html>
       <body>
         <AuthProvider>{children}</AuthProvider>
