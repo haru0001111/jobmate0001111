@@ -1,12 +1,15 @@
 import { AuthProvider } from '@/components/auth/AuthProvider';
+import './globals.css';
 
-<head>
- <meta name="google-site-verification" content="_6dVqOelkYiLj5bRALMnjPYBr2u-xN_foeQhFSZ2AeU" />
-<head>
-
-export default function RootLayout({ children }: any) {
- return (
-    <html>
+export default function RootLayout({ children }: { children: React.ReactNode }) {
+  return (
+    <html lang="ja">
+      <head>
+        <meta
+          name="google-site-verification"
+          content="_6dVqOeIkYiLj5bRALMmjPYBr2u-xN_foeOhFSZ2Ael"
+        />
+      </head>
       <body>
         <AuthProvider>{children}</AuthProvider>
       </body>
