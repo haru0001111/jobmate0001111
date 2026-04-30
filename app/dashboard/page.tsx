@@ -10,6 +10,13 @@ type Company = {
   name: string;
   status: string;
   testType: string;
+  salary?: string;
+  holidays?: string;
+  location?: string;
+  benefits?: string;
+  workStyle?: string;
+  priority?: string;
+  difficulty?: string;
 };
 
 const initialCompanies: Company[] = [];
@@ -37,6 +44,13 @@ export default function DashboardPage() {
   const [name, setName] = useState('');
   const [status, setStatus] = useState('interested');
   const [testType, setTestType] = useState('SPI');
+  const [salary, setSalary] = useState('');
+  const [holidays, setHolidays] = useState('');
+  const [location, setLocation] = useState('');
+  const [benefits, setBenefits] = useState('');
+  const [workStyle, setWorkStyle] = useState('');
+  const [priority, setPriority] = useState('');
+  const [difficulty, setDifficulty] = useState('');
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -60,10 +74,24 @@ export default function DashboardPage() {
       name,
       status,
       testType,
+      salary,
+      holidays,
+      location,
+      benefits,
+      workStyle,
+      priority,
+      difficulty,
     };
 
     await saveItem('companies', user.uid, company);
     setName('');
+    setSalary('');
+    setHolidays('');
+    setLocation('');
+    setBenefits('');
+    setWorkStyle('');
+    setPriority('');
+    setDifficulty('');
     refresh();
   }
 
@@ -137,28 +165,13 @@ export default function DashboardPage() {
 
             <div style={divider}>または</div>
 
-            <input
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              placeholder="メールアドレス"
-              style={input}
-            />
+            <input value={email} onChange={(e) => setEmail(e.target.value)} placeholder="メールアドレス" style={input} />
 
-            <input
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              placeholder="パスワード"
-              style={input}
-            />
+            <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="パスワード" style={input} />
 
             <div style={actions}>
-              <button onClick={handleEmailLogin} style={primaryButton}>
-                メールでログイン
-              </button>
-              <button onClick={handleRegister} style={ghostButton}>
-                新規登録
-              </button>
+              <button onClick={handleEmailLogin} style={primaryButton}>メールでログイン</button>
+              <button onClick={handleRegister} style={ghostButton}>新規登録</button>
             </div>
 
             <button onClick={handleMagicLink} style={ghostButton}>
@@ -197,9 +210,7 @@ export default function DashboardPage() {
           <div style={muted}>選考中</div>
         </div>
         <div style={statCard}>
-          <div style={statNumber}>
-            {companies.filter((c) => c.status === 'offer').length}
-          </div>
+          <div style={statNumber}>{companies.filter((c) => c.status === 'offer').length}</div>
           <div style={muted}>内定</div>
         </div>
       </section>
@@ -228,6 +239,14 @@ export default function DashboardPage() {
             <option>なし</option>
           </select>
 
+          <input value={salary} onChange={(e) => setSalary(e.target.value)} placeholder="初任給（例：25万円）" style={input} />
+          <input value={holidays} onChange={(e) => setHolidays(e.target.value)} placeholder="年間休日（例：120日）" style={input} />
+          <input value={location} onChange={(e) => setLocation(e.target.value)} placeholder="勤務地（例：東京・大阪）" style={input} />
+          <input value={benefits} onChange={(e) => setBenefits(e.target.value)} placeholder="福利厚生（例：住宅補助あり）" style={input} />
+          <input value={workStyle} onChange={(e) => setWorkStyle(e.target.value)} placeholder="働き方（例：リモート可）" style={input} />
+          <input value={priority} onChange={(e) => setPriority(e.target.value)} placeholder="志望度（例：高・中・低）" style={input} />
+          <input value={difficulty} onChange={(e) => setDifficulty(e.target.value)} placeholder="選考難易度（例：高・中・低）" style={input} />
+
           <button onClick={saveCompany} style={primaryButton}>追加する</button>
         </div>
       </section>
@@ -251,6 +270,8 @@ export default function DashboardPage() {
                 <div style={tagRow}>
                   <span style={tag}>{statusLabel[c.status] ?? c.status}</span>
                   <span style={tag}>{c.testType}</span>
+                  {c.salary && <span style={tag}>{c.salary}</span>}
+                  {c.holidays && <span style={tag}>{c.holidays}</span>}
                 </div>
               </div>
 
