@@ -41,6 +41,8 @@ export default function DashboardPage() {
   } = useAuth();
 
   const [companies, setCompanies] = useState<Company[]>([]);
+  const [editingId, setEditingId] = useState<string | null>(null);
+
   const [name, setName] = useState('');
   const [status, setStatus] = useState('interested');
   const [testType, setTestType] = useState('SPI');
@@ -63,6 +65,34 @@ export default function DashboardPage() {
     setCompanies(await loadItems('companies', user.uid, initialCompanies));
   }
 
+  function clearForm() {
+    setEditingId(null);
+    setName('');
+    setStatus('interested');
+    setTestType('SPI');
+    setSalary('');
+    setHolidays('');
+    setLocation('');
+    setBenefits('');
+    setWorkStyle('');
+    setPriority('');
+    setDifficulty('');
+  }
+
+  function startEdit(company: Company) {
+    setEditingId(company.id);
+    setName(company.name || '');
+    setStatus(company.status || 'interested');
+    setTestType(company.testType || 'SPI');
+    setSalary(company.salary || '');
+    setHolidays(company.holidays || '');
+    setLocation(company.location || '');
+    setBenefits(company.benefits || '');
+    setWorkStyle(company.workStyle || '');
+    setPriority(company.priority || '');
+    setDifficulty(company.difficulty || '');
+  }
+
   async function saveCompany() {
     if (!name.trim()) {
       alert('会社名を入力してね');
@@ -70,7 +100,7 @@ export default function DashboardPage() {
     }
 
     const company: Company = {
-      id: `c-${Date.now()}`,
+      id: editingId || `c-${Date.now()}`,
       name,
       status,
       testType,
@@ -84,20 +114,18 @@ export default function DashboardPage() {
     };
 
     await saveItem('companies', user.uid, company);
-    setName('');
-    setSalary('');
-    setHolidays('');
-    setLocation('');
-    setBenefits('');
-    setWorkStyle('');
-    setPriority('');
-    setDifficulty('');
+    clearForm();
     refresh();
   }
 
   async function deleteCompany(id: string) {
     if (!confirm('削除する？')) return;
     await removeItem('companies', user.uid, id);
+
+    if (editingId === id) {
+      clearForm();
+    }
+
     refresh();
   }
 
@@ -216,7 +244,14 @@ export default function DashboardPage() {
       </section>
 
       <section style={card}>
-        <h2 style={sectionTitle}>企業を追加</h2>
+        <div style={sectionHeader}>
+          <h2 style={sectionTitle}>{editingId ? '企業を編集' : '企業を追加'}</h2>
+          {editingId && (
+            <button onClick={clearForm} style={ghostButton}>
+              編集をキャンセル
+            </button>
+          )}
+        </div>
 
         <div style={formGrid}>
           <input value={name} onChange={(e) => setName(e.target.value)} placeholder="会社名" style={input} />
@@ -247,7 +282,9 @@ export default function DashboardPage() {
           <input value={priority} onChange={(e) => setPriority(e.target.value)} placeholder="志望度（例：高・中・低）" style={input} />
           <input value={difficulty} onChange={(e) => setDifficulty(e.target.value)} placeholder="選考難易度（例：高・中・低）" style={input} />
 
-          <button onClick={saveCompany} style={primaryButton}>追加する</button>
+          <button onClick={saveCompany} style={primaryButton}>
+            {editingId ? '更新する' : '追加する'}
+          </button>
         </div>
       </section>
 
@@ -276,6 +313,7 @@ export default function DashboardPage() {
               </div>
 
               <div style={actions}>
+                <button onClick={() => startEdit(c)} style={ghostButton}>編集</button>
                 <Link href={`/companies/${c.id}`} style={ghostButton}>詳細</Link>
                 <button onClick={() => deleteCompany(c.id)} style={dangerButton}>削除</button>
               </div>
