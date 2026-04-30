@@ -239,6 +239,7 @@ export default function DashboardPage() {
           <div style={actions}>
             <Link href="/events" style={ghostButton}>日程管理へ</Link>
             <Link href="/essays" style={ghostButton}>ES管理へ</Link>
+            <Link href="/compare" style={ghostButton}>企業比較へ</Link>
           </div>
         </div>
 
