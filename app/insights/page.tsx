@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { collection, getDocs, orderBy, query } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
 
@@ -20,6 +20,7 @@ type PublicCompanyInsight = {
 
 export default function InsightsPage() {
   const [items, setItems] = useState<PublicCompanyInsight[]>([]);
+  const [search, setSearch] = useState('');
 
   useEffect(() => {
     load();
@@ -34,6 +35,16 @@ export default function InsightsPage() {
     const snap = await getDocs(q);
     setItems(snap.docs.map((d) => d.data() as PublicCompanyInsight));
   }
+
+  const filteredItems = useMemo(() => {
+    const keyword = search.trim().toLowerCase();
+
+    if (!keyword) return items;
+
+    return items.filter((item) =>
+      item.companyName.toLowerCase().includes(keyword)
+    );
+  }, [items, search]);
 
   return (
     <main style={page}>
@@ -52,13 +63,23 @@ export default function InsightsPage() {
       </header>
 
       <section style={card}>
-        <h2 style={sectionTitle}>投稿された企業情報</h2>
+        <div style={sectionHeader}>
+          <h2 style={sectionTitle}>投稿された企業情報</h2>
+          <span style={muted}>{filteredItems.length}件</span>
+        </div>
 
-        {items.length === 0 ? (
-          <p style={muted}>まだデータがありません。</p>
+        <input
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          placeholder="企業名で検索（例：トヨタ、楽天、ソニー）"
+          style={searchInput}
+        />
+
+        {filteredItems.length === 0 ? (
+          <p style={muted}>該当するデータがありません。</p>
         ) : (
           <div style={list}>
-            {items.map((item) => (
+            {filteredItems.map((item) => (
               <article key={item.id} style={itemCard}>
                 <h3 style={companyName}>{item.companyName}</h3>
 
@@ -137,10 +158,30 @@ const card: React.CSSProperties = {
   boxShadow: '0 8px 20px rgba(15, 23, 42, 0.04)',
 };
 
+const sectionHeader: React.CSSProperties = {
+  display: 'flex',
+  justifyContent: 'space-between',
+  gap: 12,
+  alignItems: 'center',
+  flexWrap: 'wrap',
+  marginBottom: 16,
+};
+
 const sectionTitle: React.CSSProperties = {
-  margin: '0 0 16px',
+  margin: 0,
   fontSize: 22,
   fontWeight: 800,
+};
+
+const searchInput: React.CSSProperties = {
+  width: '100%',
+  padding: '12px 14px',
+  border: '1px solid #d1d5db',
+  borderRadius: 12,
+  fontSize: 16,
+  background: '#fff',
+  minHeight: 44,
+  marginBottom: 18,
 };
 
 const list: React.CSSProperties = {
