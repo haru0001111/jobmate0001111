@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import { loadItems, removeItem, saveItem } from '@/lib/store';
 import { useAuth } from '@/components/auth/AuthProvider';
+import { savePublicCompanyInsight } from '@/lib/publicCompanyInsights';
 
 type Company = {
   id: string;
@@ -114,6 +115,16 @@ export default function DashboardPage() {
     };
 
     await saveItem('companies', user.uid, company);
+    await savePublicCompanyInsight({
+     companyName: name,
+     salary,
+     holidays,
+     location,
+     benefits,
+     workStyle,
+     testType,
+     difficulty,
+   });
     clearForm();
     refresh();
   }
@@ -222,6 +233,7 @@ export default function DashboardPage() {
 
         <div style={actions}>
           <Link href="/events" style={primaryButton}>日程管理へ</Link>
+          <Link href="/insights" style={ghostButton}>みんなの企業データへ</Link>
           <button onClick={logout} style={ghostButton}>ログアウト</button>
         </div>
       </header>
