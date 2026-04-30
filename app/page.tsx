@@ -1,18 +1,28 @@
 import Link from 'next/link';
 
+export const metadata = {
+  title: '就活まるごと管理アプリ「就まる」｜企業・ES・日程をまとめて管理',
+  description:
+    '就活の企業管理、ES管理、日程管理、選考状況をまとめて管理できる無料アプリ「就まる」。就活を効率化したい人向け。',
+};
+
 export default function HomePage() {
   return (
     <main style={page}>
       <section style={hero}>
-        <p style={badge}>JobMate</p>
+        <p style={badge}>就まる</p>
 
         <h1 style={title}>
           就活管理を、<br />
           もっとシンプルに。
         </h1>
 
+        <p style={subTitle}>
+          就活まるごと管理
+        </p>
+
         <p style={lead}>
-          企業情報、ES、面接、説明会の日程をひとつにまとめて管理できる就活支援アプリです。
+          就まるは、企業情報、ES、面接、説明会の日程をひとつにまとめて管理できる就活支援アプリです。
         </p>
 
         <div style={actions}>
@@ -28,17 +38,30 @@ export default function HomePage() {
       <section style={grid}>
         <div style={card}>
           <h2 style={cardTitle}>企業管理</h2>
-          <p style={cardText}>企業ごとの選考状況や適性検査を整理できます。</p>
+          <p style={cardText}>
+            企業ごとの選考状況、初任給、年間休日などをまとめて管理できます。
+          </p>
         </div>
 
         <div style={card}>
           <h2 style={cardTitle}>ES管理</h2>
-          <p style={cardText}>エントリーシートを企業ごとに保存できます。</p>
+          <p style={cardText}>
+            エントリーシートを企業ごとに保存し、いつでも見返せます。
+          </p>
         </div>
 
         <div style={card}>
           <h2 style={cardTitle}>日程管理</h2>
-          <p style={cardText}>説明会や面接の予定をまとめて確認できます。</p>
+          <p style={cardText}>
+            説明会や面接の日程を一括で管理できます。
+          </p>
+        </div>
+
+        <div style={card}>
+          <h2 style={cardTitle}>企業比較</h2>
+          <p style={cardText}>
+            初任給・年間休日・勤務地などを横並びで比較できます。
+          </p>
         </div>
       </section>
 
@@ -49,6 +72,8 @@ export default function HomePage() {
     </main>
   );
 }
+
+/* ===== style ===== */
 
 const page: React.CSSProperties = {
   minHeight: '100vh',
@@ -74,11 +99,18 @@ const badge: React.CSSProperties = {
 };
 
 const title: React.CSSProperties = {
-  margin: '20px 0 16px',
+  margin: '20px 0 10px',
   fontSize: 'clamp(42px, 8vw, 72px)',
   lineHeight: 1.05,
   fontWeight: 900,
   letterSpacing: '-0.06em',
+};
+
+const subTitle: React.CSSProperties = {
+  margin: '0 0 12px',
+  fontSize: 18,
+  fontWeight: 800,
+  color: '#475569',
 };
 
 const lead: React.CSSProperties = {
